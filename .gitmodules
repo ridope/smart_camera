@@ -1,7 +1,11 @@
-[submodule "./ext_lib/mbedtls"]
-	path = ./ext_lib/mbedtls
+[submodule "mbedtls"]
+	path = /ext_libs/mbedtls
 	url = git@github.com:Mbed-TLS/mbedtls.git
 
-[submodule "./ext_lib/tinycrypt"]
-	path = ./ext_lib/tinycrypt
+[submodule "tinycrypt"]
+	path = /ext_libs/tinycrypt
 	url = git@github.com:intel/tinycrypt.git
+
+[submodule "ext_libs/Asymetric-Multi-Processing"]
+	path = ext_libs/Asymetric-Multi-Processing
+	url = git@github.com:jwfaye/Asymetric-Multi-Processing.git
