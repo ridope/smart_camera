@@ -105,10 +105,10 @@ def main():
                   "-D__vexriscv__ -MMD' make lib")
         # Compile firmware
         if args.make_clean:
-            os.system(f"cd core{i}_firmware && make clean")
+            os.system(f"cd core_{i}_firmware && make clean")
         build_path = build_path if os.path.isabs(build_path) else os.path.join("..", build_path)
         os.system(f"export BUILD_DIR={build_path} && {'export WITH_CXX=1 &&' if args.with_cxx else ''} "
-                  f"cd core{i}_firmware && make")
+                  f"cd core_{i}_firmware && make")
 
     # Copy demo.bin
     # os.system("cp demo/demo.bin ./")
