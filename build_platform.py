@@ -39,11 +39,15 @@ def main():
                 print("MAKE_AND_BUILD_INFO : Build already exists and will be deleted.")
                 shutil.rmtree(build_dir)
             os.chdir(os.path.join(cwd, soc_path))
-            os.system(f"./ridope_soc.py --build --mux {args.mux} --output_dir {build_dir}")
+            os.system(f"./ridope_soc.py --build --mux {args.mux} --build_dir {build_dir}")
             os.chdir(cwd)
         else:
             if os.path.isdir('build'):
                 pass
+            else:
+                os.chdir(os.path.join(cwd, soc_path))
+                os.system(f"./ridope_soc.py --build --mux {args.mux} --build_dir {build_dir}")
+                os.chdir(cwd)
 
 if __name__ == "__main__":
     main()
