@@ -1,10 +1,10 @@
-BUILD_DIR?=../build/firev_soc/
+#BUILD_DIR?=../build/firev_soc/
 
 include $(BUILD_DIR)/software/include/generated/variables.mak
 include $(SOC_DIRECTORY)/software/common.mak
 
 OBJDIR = ./obj
-OBJECTS := $(OBJDIR)/amp_send.o \
+OBJECTS := $(OBJDIR)/send.o \
 			$(OBJDIR)/crt0.o 	\
 			$(OBJDIR)/main.o
 

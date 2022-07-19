@@ -1,11 +1,9 @@
-BUILD_DIR?=../build/femtorv_soc/
-
 include $(BUILD_DIR)/software/include/generated/variables.mak
 include $(SOC_DIRECTORY)/software/common.mak
 
 
 OBJDIR = ./obj
-EXT_LIBDIR = ../ext_lib
+EXT_LIBDIR = ../ext_libs
 MBED_LIB = $(EXT_LIBDIR)/mbedtls/library
 
 TINY_CRYPT_OBJ := $(OBJDIR)/aes_decrypt.o \
@@ -17,7 +15,7 @@ TINY_CRYPT_OBJ := $(OBJDIR)/aes_decrypt.o \
 				$(OBJDIR)/utils.o
 
 OBJECTS := $(TINY_CRYPT_OBJ) \
-		  $(OBJDIR)/amp_aes.o \
+		  $(OBJDIR)/aes.o \
 		  $(OBJDIR)/main.o \
 		  $(OBJDIR)/crt0.o
 

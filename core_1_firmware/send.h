@@ -9,7 +9,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../Core0_firmware/data.h"
+#include "../core_0_firmware/data.h"
 
 void amp_send_class(uint8_t class);
 

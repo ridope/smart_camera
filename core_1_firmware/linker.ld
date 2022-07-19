@@ -60,7 +60,7 @@ SECTIONS
 	joseph :
     	{
     		*(joseph)
-    	} > mmap_m AT > main_ram
+    	} > mmap_m_0 AT > main_ram
 }
 
 PROVIDE(_fstack = ORIGIN(sram) + LENGTH(sram));
