@@ -16,6 +16,8 @@ def main():
     parser.add_argument("--build", action="store_true", help="Build the target platform.")
     parser.add_argument("--build_force", action="store_true", help="Build even if the build directory exists")
     parser.add_argument("--mux", default=False, help="Build the SoC with double output UART or shared UART")
+    parser.add_argument("")
+    parser.add_argument("")
     parser.add_argument("--load", action="store_true", help="Load the code to the board")
     args = parser.parse_args()
 
