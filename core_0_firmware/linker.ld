@@ -60,7 +60,7 @@ SECTIONS
 	joseph :
         	{
         		*(joseph)
-        	} > mmap_m_0 AT > main_ram
+        	} > mmap_m AT > main_ram
 }
 PROVIDE(__heap_start = _end );
 PROVIDE(__heap_end = _start);
