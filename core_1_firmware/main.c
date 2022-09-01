@@ -8,6 +8,7 @@
 
 #include "send.h"
 #include "svm_model.h"
+#include "img.h"
 
 #include <irq.h>
 #include <libbase/uart.h>
@@ -17,6 +18,8 @@
 /*-----------------------------------------------------------------------*/
 /* Uart                                                                  */
 /*-----------------------------------------------------------------------*/
+
+float *f_img = &img;
 
 static char *readstr(void)
 {
@@ -168,6 +171,8 @@ static void console_service(void)
         char *str;
 	    char *class;
 
+        printf("Predicted: %d\n", predict(f_img));
+
         /* Reading class encryption */
         printf("\e[94;1mInsert the class\e[0m> ");
         do
@@ -195,11 +200,8 @@ int main(void)
     help();
     prompt();
 
-    float img[1024];
-
     while(1) {
         console_service();
-        predict(img);
     }
 
     return 0;

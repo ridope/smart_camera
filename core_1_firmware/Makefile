@@ -26,10 +26,11 @@ endif
 vpath %.a $(PACKAGES:%=../%)
 
 demo.elf: $(OBJECTS)
-	$(CC) $(LDFLAGS) -T linker.ld -N -o $@ \
+	$(CC) -Os $(LDFLAGS) -T linker.ld -N -o $@ \
 		$(OBJECTS) \
 		$(PACKAGES:%=-L$(BUILD_DIR)/software/%) \
-		$(LIBS:lib%=-l%)
+		$(LIBS:lib%=-l%) \
+		-lgcc
 
 ifneq ($(OS),Windows_NT)
 	chmod -x $@

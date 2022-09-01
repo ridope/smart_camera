@@ -18,7 +18,7 @@ SECTIONS
 
 		*(.text .stub .text.* .gnu.linkonce.t.*)
 		_etext = .;
-	} > main_ram
+	} > sram
 
 	.rodata :
 	{
@@ -28,7 +28,7 @@ SECTIONS
 		*(.rodata1)
 		. = ALIGN(8);
 		_erodata = .;
-	} > main_ram
+	} > sram
 
 	.data :
 	{
@@ -40,7 +40,7 @@ SECTIONS
 		*(.sdata .sdata.* .gnu.linkonce.s.*)
 		. = ALIGN(8);
 		_edata = .;
-	} > sram AT > main_ram
+	} > sram
 
 	.bss :
 	{
@@ -60,10 +60,10 @@ SECTIONS
 	joseph :
         	{
         		*(joseph)
-        	} > mmap_m AT > main_ram
+        	} > mmap_m AT > sram
 }
 PROVIDE(__heap_start = _end );
-PROVIDE(__heap_end = _start);
+PROVIDE(__heap_end = ORIGIN(sram) + LENGTH(sram));
 PROVIDE(_fstack = ORIGIN(sram) + LENGTH(sram));
 PROVIDE(_fdata_rom = LOADADDR(.data));
 PROVIDE(_edata_rom = LOADADDR(.data) + SIZEOF(.data));
