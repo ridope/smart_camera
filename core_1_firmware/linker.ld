@@ -63,6 +63,8 @@ SECTIONS
     	} > mmap_m_0 AT > main_ram
 }
 
+PROVIDE(__heap_start = _end );
+PROVIDE(__heap_end = _start);
 PROVIDE(_fstack = ORIGIN(sram) + LENGTH(sram));
 PROVIDE(_fdata_rom = LOADADDR(.data));
 PROVIDE(_edata_rom = LOADADDR(.data) + SIZEOF(.data));

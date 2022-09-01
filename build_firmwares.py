@@ -17,18 +17,24 @@ def main():
     parser.add_argument("--core_1",  type=str, help="Core 1 name", required=True)
     parser.add_argument("--build_dir", type=str, help="Build the target platform.", required=True)
     parser.add_argument('--make_clean', action="store_true", help="Make clean command to firmware folders.")
+    parser.add_argument('--make_clean_lib', action="store_true", help="Make clean command to Mbdedtls library folders.")
     parser.add_argument("--with-cxx",   action="store_true", help="Enable CXX support.")
     args = parser.parse_args()
 
     cwd = os.getcwd()
     print("MAKE_AND_BUILD_INFO : Program working directory : {}".format(cwd))
-    if not os.path.isfile(os.path.join(cwd, "ext_libs", "mbedtls", "include", "mbedtls", "mbedtls_config.h")):
+   
+    if args.make_clean_lib:
         os.system(f"cp mbedtls_config.h ext_libs/mbedtls/include/mbedtls")
         os.chdir(os.path.join(os.path.join(cwd, 'ext_libs', 'mbedtls')))
         print("MAKE_AND_BUILD_INFO : Move in {}".format(os.getcwd()))
-        os.system("CC=riscv64-unknown-elf-gcc CFLAGS='-std=gnu99 -Wall -Wextra -march=rv32im -mabi=ilp32 "
-                  "-D__vexriscv__ -MMD' make lib")
-        os.chdir(cwd)
+
+        os.system("CC=riscv64-unknown-elf-gcc CFLAGS='-std=gnu99 -Wall -Os -Wextra -march=rv32im -mabi=ilp32 "
+                    "-D__vexriscv__ -MMD' make clean")
+
+        os.system("CC=riscv64-unknown-elf-gcc CFLAGS='-std=gnu99 -Wall -Os -Wextra -march=rv32im -mabi=ilp32 "
+                    "-D__vexriscv__ -MMD' make lib")
+    os.chdir(cwd)
 
     # Check argument validity
 
@@ -75,8 +81,8 @@ def main():
         build_path = build_path if os.path.isabs(build_path) else os.path.join("..", build_path)
         print("MAKE_AND_BUILD_INFO : Build path {}".format(build_path))
         os.chdir(os.path.join(cwd, f"core_{i}_firmware"))
-        os.system(f"export BUILD_DIR={build_path} && echo $BUILD_DIR {'export WITH_CXX=1 &&' if args.with_cxx else ''} "
-                  f" {'make clean' if args.make_clean else ''} && make all")
+        os.system(f"export BUILD_DIR={build_path} && {'export WITH_CXX=1 &&' if args.with_cxx else ''} "
+                  f" {'make clean' if args.make_clean else 'make all'}")
         os.chdir(cwd)
         print("*******************************************************************************************************")
 

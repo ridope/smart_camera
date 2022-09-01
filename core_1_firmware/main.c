@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "send.h"
+#include "svm_model.h"
 
 #include <irq.h>
 #include <libbase/uart.h>
@@ -194,8 +195,11 @@ int main(void)
     help();
     prompt();
 
+    float img[1024];
+
     while(1) {
         console_service();
+        predict(img);
     }
 
     return 0;

@@ -5,6 +5,7 @@ include $(SOC_DIRECTORY)/software/common.mak
 
 OBJDIR = ./obj
 OBJECTS := $(OBJDIR)/send.o \
+			$(OBJDIR)/svm_model.o 	\
 			$(OBJDIR)/crt0.o 	\
 			$(OBJDIR)/main.o
 
