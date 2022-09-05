@@ -1,27 +1,25 @@
 // This file is Copyright (c) 2020 Florent Kermarrec <florent@enjoy-digital.fr>
 // Modified by Joseph Faye
-// Modified by Lucas Esteves <lucas.esteves-rocha@insa-rennes.fr>
 // License: BSD
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "aes.h"
+#include "send.h"
+#include "svm_model.h"
+#include "img.h"
 
 #include <irq.h>
 #include <libbase/uart.h>
 #include <libbase/console.h>
 #include <generated/csr.h>
 
-#include <mbedtls/gcm.h>
-#include <mbedtls/cipher.h>
-
-DATA data __attribute__ ((section ("joseph"))) ;
-
 /*-----------------------------------------------------------------------*/
 /* Uart                                                                  */
 /*-----------------------------------------------------------------------*/
+
+float *f_img = &img;
 
 static char *readstr(void)
 {
@@ -79,7 +77,7 @@ static char *get_token(char **str)
 
 static void prompt(void)
 {
-    printf("\e[92;1mfemtorv-console\e[0m> ");
+    printf("\e[92;1mCore0\e[0m> ");
 }
 
 /*-----------------------------------------------------------------------*/
@@ -95,8 +93,10 @@ static void help(void)
 #ifdef CSR_LEDS_BASE
     puts("led                - Led demo");
 #endif
-    puts("enc              - Synchronized Encryption");
-    puts("dec              - Decryption function test");
+    puts("enc                - Synchronized encryption");
+#ifdef WITH_CXX
+    puts("hellocpp           - Hello C++");
+#endif
 }
 
 /*-----------------------------------------------------------------------*/
@@ -140,6 +140,12 @@ static void led_cmd(void)
 }
 #endif
 
+extern void sum(void);
+
+static void sum_cmd(void)
+{
+    sum();
+}
 
 /*-----------------------------------------------------------------------*/
 /* Console service / Main                                                */
@@ -162,61 +168,21 @@ static void console_service(void)
 		led_cmd();
 #endif
     else if(strcmp(token, "enc") == 0){
-        int result = 0;
-
-        // TODO: Only call this function if an encryption can be performed
-        result = amp_aes_update_nonce(&data);
-
-        if (result == -1)
-        {
-            printf("\e[91;1mError updating the nonce: struct pointer is NULL\e[0m\n");
-        }
-
-
-        result = amp_aes_encrypts(&data);
-
-        if (result == -1)
-        {
-            printf("\e[91;1mError in the encryption: struct pointer is NULL\e[0m\n");
-        }
-        else if (result == -4)
-        {
-            printf("\e[91;1mError in the encryption: flag is not active\e[0m\n");
-        }
-
-
-    }
-    else if(strcmp(token, "dec") == 0)
-    {
         char *str;
-        char *text;
-        char *nonce;
+	    char *class;
 
-        uint8_t temp_nonce[NONCE_SIZE];
+        printf("Predicted: %d\n", predict(f_img));
 
-        /* Reading nonce and text for decryption */
-        printf("\e[94;1mInsert the nonce\e[0m> ");
+        /* Reading class encryption */
+        printf("\e[94;1mInsert the class\e[0m> ");
         do
         {
             str = readstr();
         }while(str == NULL);
 
-        nonce = get_token(&str);
+        class = get_token(&str);
 
-        if (get_hex_rep(nonce, strlen(nonce), &temp_nonce[0]) == 0){
-            printf("\e[91;1mError converting the nonce\e[0m\n");
-            return;
-        }
-
-        printf("\e[94;1mInsert the chipertext\e[0m> ");
-        do
-        {
-            str = readstr();
-        }while(str == NULL);
-
-        text = get_token(&str);
-
-        amp_aes_decrypts(&data, &temp_nonce[0], (uint8_t *) text);
+        amp_send_class(atoi(class));
     }
 
 
@@ -230,11 +196,6 @@ int main(void)
 	irq_setie(1);
 #endif
     uart_init();
-
-    amp_aes_init(&data);
-
-    /* Initing nonce */
-    amp_aes_update_nonce(&data);
 
     help();
     prompt();

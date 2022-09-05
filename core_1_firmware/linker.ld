@@ -18,7 +18,7 @@ SECTIONS
 
 		*(.text .stub .text.* .gnu.linkonce.t.*)
 		_etext = .;
-	} > sram
+	} > rom
 
 	.rodata :
 	{
@@ -28,7 +28,7 @@ SECTIONS
 		*(.rodata1)
 		. = ALIGN(8);
 		_erodata = .;
-	} > sram
+	} > rom
 
 	.data :
 	{
@@ -58,11 +58,10 @@ SECTIONS
 	} > sram
 
 	joseph :
-    	{
-    		*(joseph)
-    	} > mmap_m_0 AT > sram
+	{
+		*(joseph)
+	} > mmap_m AT > sram
 }
-
 PROVIDE(__heap_start = _end );
 PROVIDE(__heap_end = ORIGIN(sram) + LENGTH(sram));
 PROVIDE(_fstack = ORIGIN(sram) + LENGTH(sram));
