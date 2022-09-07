@@ -1305,7 +1305,7 @@
  *
  * Enable sending of all alert messages
  */
-#define MBEDTLS_SSL_ALL_ALERT_MESSAGES
+//#define MBEDTLS_SSL_ALL_ALERT_MESSAGES
 
 /**
  * \def MBEDTLS_SSL_DTLS_CONNECTION_ID
@@ -1371,7 +1371,7 @@
  *
  * Comment to disable the context serialization APIs.
  */
-#define MBEDTLS_SSL_CONTEXT_SERIALIZATION
+//#define MBEDTLS_SSL_CONTEXT_SERIALIZATION
 
 /**
  * \def MBEDTLS_SSL_DEBUG_ALL
@@ -1441,7 +1441,7 @@
  * Comment this macro to disable storing the peer's certificate
  * after the handshake.
  */
-#define MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
+//#define MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
 
 /**
  * \def MBEDTLS_SSL_RENEGOTIATION
@@ -1463,7 +1463,7 @@
  *          configuration of this extension).
  *
  */
-#define MBEDTLS_SSL_RENEGOTIATION
+//#define MBEDTLS_SSL_RENEGOTIATION
 
 /**
  * \def MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
@@ -1472,7 +1472,7 @@
  *
  * Comment this macro to disable support for the max_fragment_length extension
  */
-#define MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
+//#define MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
 
 /**
  * \def MBEDTLS_SSL_PROTO_TLS1_2
@@ -1543,7 +1543,7 @@
  *
  * Comment this macro to disable support for ALPN.
  */
-#define MBEDTLS_SSL_ALPN
+//#define MBEDTLS_SSL_ALPN
 
 /**
  * \def MBEDTLS_SSL_DTLS_ANTI_REPLAY
@@ -2103,7 +2103,7 @@
  * This module enables the AES-CCM ciphersuites, if other requisites are
  * enabled as well.
  */
-#define MBEDTLS_CCM_C
+//#define MBEDTLS_CCM_C
 
 /**
  * \def MBEDTLS_CHACHA20_C
