@@ -5,6 +5,8 @@ __DYNAMIC = 0;
 
 INCLUDE /generated/regions.ld
 
+STACK_SIZE = 0x1000; /* 4 kB */
+
 SECTIONS
 {
 	.text :
@@ -18,7 +20,7 @@ SECTIONS
 
 		*(.text .stub .text.* .gnu.linkonce.t.*)
 		_etext = .;
-	} > rom
+	} > sram
 
 	.rodata :
 	{
@@ -28,7 +30,7 @@ SECTIONS
 		*(.rodata1)
 		. = ALIGN(8);
 		_erodata = .;
-	} > rom
+	} > sram
 
 	.data :
 	{
@@ -40,7 +42,7 @@ SECTIONS
 		*(.sdata .sdata.* .gnu.linkonce.s.*)
 		. = ALIGN(8);
 		_edata = .;
-	} > sram
+	} > sram 
 
 	.bss :
 	{
@@ -58,13 +60,20 @@ SECTIONS
 	} > sram
 
 	joseph :
-    	{
-    		*(joseph)
-    	} > mmap_m_0 AT > sram
+	{
+		*(joseph)
+	} > mmap_m_0 AT > sram
+
+	.stack (NOLOAD) :
+    {
+        . = ALIGN(8);
+        . = . + STACK_SIZE;
+        . = ALIGN(8);
+		PROVIDE(_fstack = .);
+    } > sram
 }
 
 PROVIDE(__heap_start = _end );
 PROVIDE(__heap_end = ORIGIN(sram) + LENGTH(sram));
-PROVIDE(_fstack = ORIGIN(sram) + LENGTH(sram));
 PROVIDE(_fdata_rom = LOADADDR(.data));
 PROVIDE(_edata_rom = LOADADDR(.data) + SIZEOF(.data));

@@ -183,7 +183,8 @@ int amp_aes_encrypts(DATA *data_ctrl)
 
 		printf("\n");
 
-
+		free(ciphertext);
+		mbedtls_gcm_free(&ctx);
 		return 0;
 
 	}else{
@@ -233,4 +234,6 @@ void amp_aes_decrypts(DATA *data_ctrl, uint8_t *nonce, uint8_t *text)
 
 	printf("\e[94;1mText: \e[0m");
 	printf("%d\n", *text_out);
+
+	mbedtls_gcm_free(&ctx);
 }

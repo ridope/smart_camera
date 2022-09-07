@@ -108,39 +108,6 @@ static void reboot_cmd(void)
     ctrl_reset_write(1);
 }
 
-#ifdef CSR_LEDS_BASE
-static void led_cmd(void)
-{
-	int i;
-	printf("Led demo...\n");
-
-	printf("Counter mode...\n");
-	for(i=0; i<32; i++) {
-		leds_out_write(i);
-		busy_wait(100);
-	}
-
-	printf("Shift mode...\n");
-	for(i=0; i<4; i++) {
-		leds_out_write(1<<i);
-		busy_wait(200);
-	}
-	for(i=0; i<4; i++) {
-		leds_out_write(1<<(3-i));
-		busy_wait(200);
-	}
-
-	printf("Dance mode...\n");
-	for(i=0; i<4; i++) {
-		leds_out_write(0x55);
-		busy_wait(200);
-		leds_out_write(0xaa);
-		busy_wait(200);
-	}
-}
-#endif
-
-
 /*-----------------------------------------------------------------------*/
 /* Console service / Main                                                */
 /*-----------------------------------------------------------------------*/
@@ -157,10 +124,6 @@ static void console_service(void)
         help();
     else if(strcmp(token, "reboot") == 0)
         reboot_cmd();
-#ifdef CSR_LEDS_BASE
-        else if(strcmp(token, "led") == 0)
-		led_cmd();
-#endif
     else if(strcmp(token, "enc") == 0){
         int result = 0;
 
@@ -186,39 +149,6 @@ static void console_service(void)
 
 
     }
-    else if(strcmp(token, "dec") == 0)
-    {
-        char *str;
-        char *text;
-        char *nonce;
-
-        uint8_t temp_nonce[NONCE_SIZE];
-
-        /* Reading nonce and text for decryption */
-        printf("\e[94;1mInsert the nonce\e[0m> ");
-        do
-        {
-            str = readstr();
-        }while(str == NULL);
-
-        nonce = get_token(&str);
-
-        if (get_hex_rep(nonce, strlen(nonce), &temp_nonce[0]) == 0){
-            printf("\e[91;1mError converting the nonce\e[0m\n");
-            return;
-        }
-
-        printf("\e[94;1mInsert the chipertext\e[0m> ");
-        do
-        {
-            str = readstr();
-        }while(str == NULL);
-
-        text = get_token(&str);
-
-        amp_aes_decrypts(&data, &temp_nonce[0], (uint8_t *) text);
-    }
-
 
     prompt();
 }

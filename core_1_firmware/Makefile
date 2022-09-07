@@ -41,7 +41,7 @@ endif
 vpath %.a $(PACKAGES:%=../%)
 
 demo.elf: $(OBJECTS)
-	$(CC) -Os $(LDFLAGS) -T linker.ld -N -o $@ \
+	$(CC) -Os $(LDFLAGS) -Wl,-Map=output.map -Wl,--print-memory-usage -T linker.ld -N -o $@ \
 		$(OBJECTS) \
 		$(PACKAGES:%=-L$(BUILD_DIR)/software/%) \
 		-L$(EXT_LIBDIR)/tinycrypt/lib \

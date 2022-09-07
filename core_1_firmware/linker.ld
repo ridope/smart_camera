@@ -5,6 +5,8 @@ __DYNAMIC = 0;
 
 INCLUDE /generated/regions.ld
 
+STACK_SIZE = 0x1000; /* 4 kB */
+
 SECTIONS
 {
 	.text :
@@ -15,10 +17,18 @@ SECTIONS
 		*crt0*(.text)
 		KEEP(*crt0*(.text))
 		KEEP(*(.text.isr))
+	} > sram
 
+	.ram_text :
+	{
+		*aes*(.text)
+	} > main_ram
+
+	.text_2 :
+	{
 		*(.text .stub .text.* .gnu.linkonce.t.*)
 		_etext = .;
-	} > rom
+	} > sram
 
 	.rodata :
 	{
@@ -28,7 +38,7 @@ SECTIONS
 		*(.rodata1)
 		. = ALIGN(8);
 		_erodata = .;
-	} > rom
+	} > sram
 
 	.data :
 	{
@@ -40,7 +50,7 @@ SECTIONS
 		*(.sdata .sdata.* .gnu.linkonce.s.*)
 		. = ALIGN(8);
 		_edata = .;
-	} > sram
+	} > main_ram AT > sram
 
 	.bss :
 	{
@@ -55,15 +65,23 @@ SECTIONS
 		. = ALIGN(8);
 		_ebss = .;
 		_end = .;
-	} > sram
+	} > sram 
 
 	joseph :
 	{
 		*(joseph)
-	} > mmap_m AT > sram
+	} > mmap_m_0 AT > sram
+
+	.stack (NOLOAD) :
+    {
+        . = ALIGN(8);
+        . = . + STACK_SIZE;
+        . = ALIGN(8);
+		PROVIDE(_fstack = .);
+    } > sram
 }
-PROVIDE(__heap_start = _end );
-PROVIDE(__heap_end = ORIGIN(sram) + LENGTH(sram));
-PROVIDE(_fstack = ORIGIN(sram) + LENGTH(sram));
+
+PROVIDE(__heap_start = _edata );
+PROVIDE(__heap_end = ORIGIN(main_ram) + LENGTH(main_ram));
 PROVIDE(_fdata_rom = LOADADDR(.data));
 PROVIDE(_edata_rom = LOADADDR(.data) + SIZEOF(.data));
