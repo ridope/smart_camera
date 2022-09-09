@@ -29,11 +29,19 @@ ifdef WITH_CXX
 	OBJECTS += hellocpp.o
 endif
 
-all: demo.bin
+all: sram.bin main_ram.bin
 
 
-%.bin: %.elf
-	$(OBJCOPY) -O binary $< $@
+sram.bin: demo.elf
+	$(OBJCOPY) -O binary -R .data -R .ram_text $< $@
+
+ifneq ($(OS),Windows_NT)
+	chmod -x $@
+endif
+
+main_ram.bin: demo.elf
+	$(OBJCOPY) -O binary -j .data -j .ram_text $< $@
+
 ifneq ($(OS),Windows_NT)
 	chmod -x $@
 endif
@@ -76,6 +84,14 @@ $(OBJDIR)/%.o: %.c
 	@mkdir -p $(@D)
 	$(compile)
 
+$(OBJDIR)/%_temp.o: $(EXT_LIBDIR)/tinycrypt/lib/source/aes%.c
+	@mkdir -p $(@D)
+	$(compile)
+
+$(OBJDIR)/%.o: $(OBJDIR)/%_temp.o
+	@mkdir -p $(@D)
+	$(OBJCOPY) --rename-section .text=.aes_text $< $@
+
 $(OBJDIR)/%.o: $(EXT_LIBDIR)/tinycrypt/lib/source/%.c
 	@mkdir -p $(@D)
 	$(compile)
@@ -88,6 +104,6 @@ $(OBJDIR)/%.o: %.S
 	$(assemble)
 
 clean:
-	$(RM) $(OBJECTS) demo.elf demo.bin .*~ *~
+	$(RM) $(OBJECTS) *.elf *.bin .*~ *~
 
 .PHONY: all clean
