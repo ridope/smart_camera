@@ -112,7 +112,7 @@ typedef struct tc_hmac_prng_struct *TCHmacPrng_t;
  *  @param personalization IN -- personalization string
  *  @param plen IN -- personalization length in bytes
  */
-int tc_hmac_prng_init(TCHmacPrng_t prng,
+__attribute__((section(".ram_code"))) int tc_hmac_prng_init(TCHmacPrng_t prng,
 		      const uint8_t *personalization,
 		      unsigned int plen);
 
@@ -136,7 +136,7 @@ int tc_hmac_prng_init(TCHmacPrng_t prng,
  *  @param additional_input IN -- additional input to the prng
  *  @param additionallen IN -- additional input length in bytes
  */
-int tc_hmac_prng_reseed(TCHmacPrng_t prng, const uint8_t *seed,
+__attribute__((section(".ram_code"))) int tc_hmac_prng_reseed(TCHmacPrng_t prng, const uint8_t *seed,
 			unsigned int seedlen, const uint8_t *additional_input,
 			unsigned int additionallen);
 
@@ -155,7 +155,7 @@ int tc_hmac_prng_reseed(TCHmacPrng_t prng, const uint8_t *seed,
  *  @param outlen IN -- size of out buffer in bytes
  *  @param prng IN/OUT -- the PRNG state
  */
-int tc_hmac_prng_generate(uint8_t *out, unsigned int outlen, TCHmacPrng_t prng);
+__attribute__((section(".ram_code"))) int tc_hmac_prng_generate(uint8_t *out, unsigned int outlen, TCHmacPrng_t prng);
 
 #ifdef __cplusplus
 }

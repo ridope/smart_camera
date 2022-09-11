@@ -17,18 +17,14 @@ SECTIONS
 		*crt0*(.text)
 		KEEP(*crt0*(.text))
 		KEEP(*(.text.isr))
-	} > sram
-
-	.ram_text :
-	{
-		*aes*(.text)
-	} > main_ram
-
-	.text_2 :
-	{
 		*(.text .stub .text.* .gnu.linkonce.t.*)
 		_etext = .;
 	} > sram
+
+	.my_ram :
+	{
+		*(.ram_code)
+	} > main_ram
 
 	.rodata :
 	{
@@ -50,7 +46,7 @@ SECTIONS
 		*(.sdata .sdata.* .gnu.linkonce.s.*)
 		. = ALIGN(8);
 		_edata = .;
-	} > main_ram AT > sram
+	} > sram
 
 	.bss :
 	{
@@ -79,6 +75,7 @@ SECTIONS
         . = ALIGN(8);
 		PROVIDE(_fstack = .);
     } > sram
+	
 }
 
 PROVIDE(__heap_start = _edata );

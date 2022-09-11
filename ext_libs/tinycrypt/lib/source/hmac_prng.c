@@ -75,7 +75,7 @@ static const unsigned int  MAX_OUT = (1 << 19);
 /*
  * Assumes: prng != NULL
  */
-static void update(TCHmacPrng_t prng, const uint8_t *data, unsigned int datalen, const uint8_t *additional_data, unsigned int additional_datalen)
+__attribute__((section(".ram_code"))) static void update(TCHmacPrng_t prng, const uint8_t *data, unsigned int datalen, const uint8_t *additional_data, unsigned int additional_datalen)
 {
 	const uint8_t separator0 = 0x00;
 	const uint8_t separator1 = 0x01;
@@ -127,7 +127,7 @@ static void update(TCHmacPrng_t prng, const uint8_t *data, unsigned int datalen,
 	(void)tc_hmac_final(prng->v, sizeof(prng->v), &prng->h);
 }
 
-int tc_hmac_prng_init(TCHmacPrng_t prng,
+__attribute__((section(".ram_code"))) int tc_hmac_prng_init(TCHmacPrng_t prng,
 		      const uint8_t *personalization,
 		      unsigned int plen)
 {
@@ -151,7 +151,7 @@ int tc_hmac_prng_init(TCHmacPrng_t prng,
 	return TC_CRYPTO_SUCCESS;
 }
 
-int tc_hmac_prng_reseed(TCHmacPrng_t prng,
+__attribute__((section(".ram_code"))) int tc_hmac_prng_reseed(TCHmacPrng_t prng,
 			const uint8_t *seed,
 			unsigned int seedlen,
 			const uint8_t *additional_input,
@@ -189,7 +189,7 @@ int tc_hmac_prng_reseed(TCHmacPrng_t prng,
 	return TC_CRYPTO_SUCCESS;
 }
 
-int tc_hmac_prng_generate(uint8_t *out, unsigned int outlen, TCHmacPrng_t prng)
+__attribute__((section(".ram_code"))) int tc_hmac_prng_generate(uint8_t *out, unsigned int outlen, TCHmacPrng_t prng)
 {
 	unsigned int bufferlen;
 

@@ -34,7 +34,7 @@
 #include <tinycrypt/constants.h>
 #include <tinycrypt/utils.h>
 
-int tc_cbc_mode_encrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
+__attribute__((section(".ram_code"))) int tc_cbc_mode_encrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
 			    unsigned int inlen, const uint8_t *iv,
 			    const TCAesKeySched_t sched)
 {
@@ -74,7 +74,7 @@ int tc_cbc_mode_encrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
 	return TC_CRYPTO_SUCCESS;
 }
 
-int tc_cbc_mode_decrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
+__attribute__((section(".ram_code"))) int tc_cbc_mode_decrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
 			    unsigned int inlen, const uint8_t *iv,
 			    const TCAesKeySched_t sched)
 {

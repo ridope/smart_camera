@@ -61,7 +61,7 @@
 /*
  * Initialize a context
  */
-void mbedtls_gcm_init( mbedtls_gcm_context *ctx )
+__attribute__((section(".ram_code"))) void mbedtls_gcm_init( mbedtls_gcm_context *ctx )
 {
     GCM_VALIDATE( ctx != NULL );
     memset( ctx, 0, sizeof( mbedtls_gcm_context ) );
@@ -75,7 +75,7 @@ void mbedtls_gcm_init( mbedtls_gcm_context *ctx )
  * is the high-order bit of HH corresponds to P^0 and the low-order bit of HL
  * corresponds to P^127.
  */
-static int gcm_gen_table( mbedtls_gcm_context *ctx )
+__attribute__((section(".ram_code"))) static int gcm_gen_table( mbedtls_gcm_context *ctx )
 {
     int ret, i, j;
     uint64_t hi, lo;
@@ -135,7 +135,7 @@ static int gcm_gen_table( mbedtls_gcm_context *ctx )
     return( 0 );
 }
 
-int mbedtls_gcm_setkey( mbedtls_gcm_context *ctx,
+__attribute__((section(".ram_code"))) int mbedtls_gcm_setkey( mbedtls_gcm_context *ctx,
                         mbedtls_cipher_id_t cipher,
                         const unsigned char *key,
                         unsigned int keybits )
@@ -189,7 +189,7 @@ static const uint64_t last4[16] =
  * Sets output to x times H using the precomputed tables.
  * x and output are seen as elements of GF(2^128) as in [MGV].
  */
-static void gcm_mult( mbedtls_gcm_context *ctx, const unsigned char x[16],
+__attribute__((section(".ram_code"))) static void gcm_mult( mbedtls_gcm_context *ctx, const unsigned char x[16],
                       unsigned char output[16] )
 {
     int i = 0;
@@ -245,7 +245,7 @@ static void gcm_mult( mbedtls_gcm_context *ctx, const unsigned char x[16],
     MBEDTLS_PUT_UINT32_BE( zl, output, 12 );
 }
 
-int mbedtls_gcm_starts( mbedtls_gcm_context *ctx,
+__attribute__((section(".ram_code"))) int mbedtls_gcm_starts( mbedtls_gcm_context *ctx,
                         int mode,
                         const unsigned char *iv, size_t iv_len )
 {
@@ -328,7 +328,7 @@ int mbedtls_gcm_starts( mbedtls_gcm_context *ctx,
  *     * len > 0 && len % 16 == 0:      the authentication tag is correct if
  *                                      the data ends now.
  */
-int mbedtls_gcm_update_ad( mbedtls_gcm_context *ctx,
+__attribute__((section(".ram_code"))) int mbedtls_gcm_update_ad( mbedtls_gcm_context *ctx,
                            const unsigned char *add, size_t add_len )
 {
     const unsigned char *p;
@@ -383,7 +383,7 @@ int mbedtls_gcm_update_ad( mbedtls_gcm_context *ctx,
 }
 
 /* Increment the counter. */
-static void gcm_incr( unsigned char y[16] )
+__attribute__((section(".ram_code"))) static void gcm_incr( unsigned char y[16] )
 {
     size_t i;
     for( i = 16; i > 12; i-- )
@@ -393,7 +393,7 @@ static void gcm_incr( unsigned char y[16] )
 
 /* Calculate and apply the encryption mask. Process use_len bytes of data,
  * starting at position offset in the mask block. */
-static int gcm_mask( mbedtls_gcm_context *ctx,
+__attribute__((section(".ram_code"))) static int gcm_mask( mbedtls_gcm_context *ctx,
                      unsigned char ectr[16],
                      size_t offset, size_t use_len,
                      const unsigned char *input,
@@ -421,7 +421,7 @@ static int gcm_mask( mbedtls_gcm_context *ctx,
     return( 0 );
 }
 
-int mbedtls_gcm_update( mbedtls_gcm_context *ctx,
+__attribute__((section(".ram_code"))) int mbedtls_gcm_update( mbedtls_gcm_context *ctx,
                         const unsigned char *input, size_t input_length,
                         unsigned char *output, size_t output_size,
                         size_t *output_length )
@@ -646,7 +646,7 @@ int mbedtls_gcm_auth_decrypt( mbedtls_gcm_context *ctx,
     return( 0 );
 }
 
-void mbedtls_gcm_free( mbedtls_gcm_context *ctx )
+__attribute__((section(".ram_code"))) void mbedtls_gcm_free( mbedtls_gcm_context *ctx )
 {
     if( ctx == NULL )
         return;

@@ -161,12 +161,13 @@ int main(void)
 #endif
     uart_init();
 
+    help();
+
     amp_aes_init(&data);
 
     /* Initing nonce */
     amp_aes_update_nonce(&data);
 
-    help();
     prompt();
 
     while(1) {

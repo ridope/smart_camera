@@ -71,7 +71,7 @@
 #define O_CLOEXEC 0
 #endif
 
-int default_CSPRNG(uint8_t *dest, unsigned int size) {
+__attribute__((section(".ram_code"))) int default_CSPRNG(uint8_t *dest, unsigned int size) {
 
   /* input sanity check: */
   if (dest == (uint8_t *) 0 || (size <= 0))

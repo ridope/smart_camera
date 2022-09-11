@@ -75,7 +75,7 @@ const unsigned char gf_wrap = 0x87;
  *  effects: doubles the GF(2^n) value pointed to by "in" and places
  *           the result in the GF(2^n) value pointed to by "out."
  */
-void gf_double(uint8_t *out, uint8_t *in)
+__attribute__((section(".ram_code"))) void gf_double(uint8_t *out, uint8_t *in)
 {
 
 	/* start with low order byte */
@@ -94,7 +94,7 @@ void gf_double(uint8_t *out, uint8_t *in)
 	}
 }
 
-int tc_cmac_setup(TCCmacState_t s, const uint8_t *key, TCAesKeySched_t sched)
+__attribute__((section(".ram_code"))) int tc_cmac_setup(TCCmacState_t s, const uint8_t *key, TCAesKeySched_t sched)
 {
 
 	/* input sanity check: */
@@ -122,7 +122,7 @@ int tc_cmac_setup(TCCmacState_t s, const uint8_t *key, TCAesKeySched_t sched)
 	return TC_CRYPTO_SUCCESS;
 }
 
-int tc_cmac_erase(TCCmacState_t s)
+__attribute__((section(".ram_code"))) int tc_cmac_erase(TCCmacState_t s)
 {
 	if (s == (TCCmacState_t) 0) {
 		return TC_CRYPTO_FAIL;
@@ -134,7 +134,7 @@ int tc_cmac_erase(TCCmacState_t s)
 	return TC_CRYPTO_SUCCESS;
 }
 
-int tc_cmac_init(TCCmacState_t s)
+__attribute__((section(".ram_code"))) int tc_cmac_init(TCCmacState_t s)
 {
 	/* input sanity check: */
 	if (s == (TCCmacState_t) 0) {
@@ -154,7 +154,7 @@ int tc_cmac_init(TCCmacState_t s)
 	return TC_CRYPTO_SUCCESS;
 }
 
-int tc_cmac_update(TCCmacState_t s, const uint8_t *data, size_t data_length)
+__attribute__((section(".ram_code"))) int tc_cmac_update(TCCmacState_t s, const uint8_t *data, size_t data_length)
 {
 	unsigned int i;
 
@@ -219,7 +219,7 @@ int tc_cmac_update(TCCmacState_t s, const uint8_t *data, size_t data_length)
 	return TC_CRYPTO_SUCCESS;
 }
 
-int tc_cmac_final(uint8_t *tag, TCCmacState_t s)
+__attribute__((section(".ram_code"))) int tc_cmac_final(uint8_t *tag, TCCmacState_t s)
 {
 	uint8_t *k;
 	unsigned int i;

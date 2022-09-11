@@ -50,7 +50,7 @@
  *  @param arr IN/OUT -- array to be incremented
  *  @param len IN -- size of arr in bytes
  */
-static void arrInc(uint8_t arr[], unsigned int len)
+__attribute__((section(".ram_code"))) static void arrInc(uint8_t arr[], unsigned int len)
 {
 	unsigned int i;
 	if (0 != arr) {
@@ -71,7 +71,7 @@ static void arrInc(uint8_t arr[], unsigned int len)
  *  @param ctx IN/OUT -- CTR PRNG state
  *  @param providedData IN -- data used when updating the internal state
  */
-static void tc_ctr_prng_update(TCCtrPrng_t * const ctx, uint8_t const * const providedData)
+__attribute__((section(".ram_code"))) static void tc_ctr_prng_update(TCCtrPrng_t * const ctx, uint8_t const * const providedData)
 {
 	if (0 != ctx) {
 		/* 10.2.1.2 step 1 */
@@ -114,7 +114,7 @@ static void tc_ctr_prng_update(TCCtrPrng_t * const ctx, uint8_t const * const pr
 	}
 }
 
-int tc_ctr_prng_init(TCCtrPrng_t * const ctx, 
+__attribute__((section(".ram_code"))) int tc_ctr_prng_init(TCCtrPrng_t * const ctx, 
 		     uint8_t const * const entropy,
 		     unsigned int entropyLen, 
 		     uint8_t const * const personalization,
@@ -161,7 +161,7 @@ int tc_ctr_prng_init(TCCtrPrng_t * const ctx,
 	return result;
 }
 
-int tc_ctr_prng_reseed(TCCtrPrng_t * const ctx, 
+__attribute__((section(".ram_code"))) int tc_ctr_prng_reseed(TCCtrPrng_t * const ctx, 
 			uint8_t const * const entropy,
 			unsigned int entropyLen,
 			uint8_t const * const additional_input,
@@ -202,7 +202,7 @@ int tc_ctr_prng_reseed(TCCtrPrng_t * const ctx,
 	return result;
 }
 
-int tc_ctr_prng_generate(TCCtrPrng_t * const ctx,
+__attribute__((section(".ram_code"))) int tc_ctr_prng_generate(TCCtrPrng_t * const ctx,
 			uint8_t const * const additional_input,
 			unsigned int additionallen,
 			uint8_t * const out,
@@ -269,7 +269,7 @@ int tc_ctr_prng_generate(TCCtrPrng_t * const ctx,
 	return result;
 }
 
-void tc_ctr_prng_uninstantiate(TCCtrPrng_t * const ctx)
+__attribute__((section(".ram_code"))) void tc_ctr_prng_uninstantiate(TCCtrPrng_t * const ctx)
 {
 	if (0 != ctx) {
 		memset(ctx->key.words, 0x00, sizeof ctx->key.words);

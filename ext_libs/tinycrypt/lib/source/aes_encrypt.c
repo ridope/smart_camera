@@ -67,7 +67,7 @@ static inline unsigned int rotword(unsigned int a)
 #define subbyte(a, o)(sbox[((a) >> (o))&0xff] << (o))
 #define subword(a)(subbyte(a, 24)|subbyte(a, 16)|subbyte(a, 8)|subbyte(a, 0))
 
-int tc_aes128_set_encrypt_key(TCAesKeySched_t s, const uint8_t *k)
+__attribute__((section(".ram_code"))) int tc_aes128_set_encrypt_key(TCAesKeySched_t s, const uint8_t *k)
 {
 	const unsigned int rconst[11] = {
 		0x00000000, 0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000,
@@ -98,7 +98,7 @@ int tc_aes128_set_encrypt_key(TCAesKeySched_t s, const uint8_t *k)
 	return TC_CRYPTO_SUCCESS;
 }
 
-static inline void add_round_key(uint8_t *s, const unsigned int *k)
+__attribute__((section(".ram_code"))) static inline void add_round_key(uint8_t *s, const unsigned int *k)
 {
 	s[0] ^= (uint8_t)(k[0] >> 24); s[1] ^= (uint8_t)(k[0] >> 16);
 	s[2] ^= (uint8_t)(k[0] >> 8); s[3] ^= (uint8_t)(k[0]);
@@ -110,7 +110,7 @@ static inline void add_round_key(uint8_t *s, const unsigned int *k)
 	s[14] ^= (uint8_t)(k[3] >> 8); s[15] ^= (uint8_t)(k[3]);
 }
 
-static inline void sub_bytes(uint8_t *s)
+__attribute__((section(".ram_code"))) static inline void sub_bytes(uint8_t *s)
 {
 	unsigned int i;
 
@@ -121,7 +121,7 @@ static inline void sub_bytes(uint8_t *s)
 
 #define triple(a)(_double_byte(a)^(a))
 
-static inline void mult_row_column(uint8_t *out, const uint8_t *in)
+__attribute__((section(".ram_code"))) static inline void mult_row_column(uint8_t *out, const uint8_t *in)
 {
 	out[0] = _double_byte(in[0]) ^ triple(in[1]) ^ in[2] ^ in[3];
 	out[1] = in[0] ^ _double_byte(in[1]) ^ triple(in[2]) ^ in[3];
@@ -129,7 +129,7 @@ static inline void mult_row_column(uint8_t *out, const uint8_t *in)
 	out[3] = triple(in[0]) ^ in[1] ^ in[2] ^ _double_byte(in[3]);
 }
 
-static inline void mix_columns(uint8_t *s)
+__attribute__((section(".ram_code"))) static inline void mix_columns(uint8_t *s)
 {
 	uint8_t t[Nb*Nk];
 
@@ -144,7 +144,7 @@ static inline void mix_columns(uint8_t *s)
  * This shift_rows also implements the matrix flip required for mix_columns, but
  * performs it here to reduce the number of memory operations.
  */
-static inline void shift_rows(uint8_t *s)
+__attribute__((section(".ram_code"))) static inline void shift_rows(uint8_t *s)
 {
 	uint8_t t[Nb * Nk];
 
@@ -155,7 +155,7 @@ static inline void shift_rows(uint8_t *s)
 	(void) _copy(s, sizeof(t), t, sizeof(t));
 }
 
-int tc_aes_encrypt(uint8_t *out, const uint8_t *in, const TCAesKeySched_t s)
+__attribute__((section(".ram_code"))) int tc_aes_encrypt(uint8_t *out, const uint8_t *in, const TCAesKeySched_t s)
 {
 	uint8_t state[Nk*Nb];
 	unsigned int i;

@@ -34,7 +34,7 @@
 #include <tinycrypt/constants.h>
 #include <tinycrypt/utils.h>
 
-static void rekey(uint8_t *key, const uint8_t *new_key, unsigned int key_size)
+__attribute__((section(".ram_code"))) static void rekey(uint8_t *key, const uint8_t *new_key, unsigned int key_size)
 {
 	const uint8_t inner_pad = (uint8_t) 0x36;
 	const uint8_t outer_pad = (uint8_t) 0x5c;
@@ -49,7 +49,7 @@ static void rekey(uint8_t *key, const uint8_t *new_key, unsigned int key_size)
 	}
 }
 
-int tc_hmac_set_key(TCHmacState_t ctx, const uint8_t *key,
+__attribute__((section(".ram_code"))) int tc_hmac_set_key(TCHmacState_t ctx, const uint8_t *key,
 		    unsigned int key_size)
 {
 	/* Input sanity check */
@@ -92,7 +92,7 @@ int tc_hmac_set_key(TCHmacState_t ctx, const uint8_t *key,
 	return TC_CRYPTO_SUCCESS;
 }
 
-int tc_hmac_init(TCHmacState_t ctx)
+__attribute__((section(".ram_code"))) int tc_hmac_init(TCHmacState_t ctx)
 {
 
 	/* input sanity check: */
@@ -106,7 +106,7 @@ int tc_hmac_init(TCHmacState_t ctx)
 	return TC_CRYPTO_SUCCESS;
 }
 
-int tc_hmac_update(TCHmacState_t ctx,
+__attribute__((section(".ram_code"))) int tc_hmac_update(TCHmacState_t ctx,
 		   const void *data,
 		   unsigned int data_length)
 {
@@ -121,7 +121,7 @@ int tc_hmac_update(TCHmacState_t ctx,
 	return TC_CRYPTO_SUCCESS;
 }
 
-int tc_hmac_final(uint8_t *tag, unsigned int taglen, TCHmacState_t ctx)
+__attribute__((section(".ram_code"))) int tc_hmac_final(uint8_t *tag, unsigned int taglen, TCHmacState_t ctx)
 {
 
 	/* input sanity check: */

@@ -17,7 +17,7 @@ TCCtrPrng_t ctx;
  * @param hex_out 	Output hex representation
  * @return uint8_t 	The bytes written in the output
  */
-uint8_t get_hex_rep(char *str_input, uint8_t in_size, uint8_t *hex_out)
+__attribute__((section(".ram_code"))) uint8_t get_hex_rep(char *str_input, uint8_t in_size, uint8_t *hex_out)
 {
 	if(str_input == NULL || hex_out == NULL)
 	{
@@ -55,7 +55,7 @@ uint8_t get_hex_rep(char *str_input, uint8_t in_size, uint8_t *hex_out)
  * @param data_ctrl 	The pointer for the struct holding the information to perform the encryption
  * @return int 			Returns 0 if success, < 0 if an error ocurred
  */
-int amp_aes_init(DATA *data_ctrl)
+__attribute__((section(".ram_code"))) int amp_aes_init(DATA *data_ctrl)
 {
 	if(data_ctrl==NULL)
 	{
@@ -95,7 +95,7 @@ int amp_aes_init(DATA *data_ctrl)
  * @param data_ctrl 	The pointer for the struct holding the information to perform the encryption
  * @return int 			Returns 0 if success, < 0 if an error ocurred
  */
-int amp_aes_update_nonce(DATA *data_ctrl)
+__attribute__((section(".ram_code"))) int amp_aes_update_nonce(DATA *data_ctrl)
 {
 	if(data_ctrl==NULL)
 	{
@@ -121,7 +121,7 @@ int amp_aes_update_nonce(DATA *data_ctrl)
  * @param data_ctrl 		The pointer for the struct holding the information to perform the encryption
  * @return int 				Returns 0 if success, < 0 if an error ocurred
  */
-int amp_aes_encrypts(DATA *data_ctrl)
+__attribute__((section(".ram_code"))) int amp_aes_encrypts(DATA *data_ctrl)
 {
 	if(data_ctrl==NULL)
 	{
@@ -200,7 +200,7 @@ int amp_aes_encrypts(DATA *data_ctrl)
  *  @param data_ctrl 		The pointer for the struct holding the information to perform the encryption
  *
  */
-void amp_aes_decrypts(DATA *data_ctrl, uint8_t *nonce, uint8_t *text)
+__attribute__((section(".ram_code"))) void amp_aes_decrypts(DATA *data_ctrl, uint8_t *nonce, uint8_t *text)
 {
 	/* Setting decryption configs */
 	uint8_t input_len = strlen((char *) text);

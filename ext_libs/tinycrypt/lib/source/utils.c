@@ -37,7 +37,7 @@
 
 #define MASK_TWENTY_SEVEN 0x1b
 
-unsigned int _copy(uint8_t *to, unsigned int to_len,
+__attribute__((section(".ram_code"))) unsigned int _copy(uint8_t *to, unsigned int to_len,
 		   const uint8_t *from, unsigned int from_len)
 {
 	if (from_len <= to_len) {
@@ -48,7 +48,7 @@ unsigned int _copy(uint8_t *to, unsigned int to_len,
 	}
 }
 
-void _set(void *to, uint8_t val, unsigned int len)
+__attribute__((section(".ram_code"))) void _set(void *to, uint8_t val, unsigned int len)
 {
 	(void)memset(to, val, len);
 }
@@ -56,12 +56,12 @@ void _set(void *to, uint8_t val, unsigned int len)
 /*
  * Doubles the value of a byte for values up to 127.
  */
-uint8_t _double_byte(uint8_t a)
+__attribute__((section(".ram_code"))) uint8_t _double_byte(uint8_t a)
 {
 	return ((a<<1) ^ ((a>>7) * MASK_TWENTY_SEVEN));
 }
 
-int _compare(const uint8_t *a, const uint8_t *b, size_t size)
+__attribute__((section(".ram_code"))) int _compare(const uint8_t *a, const uint8_t *b, size_t size)
 {
 	const uint8_t *tempa = a;
 	const uint8_t *tempb = b;

@@ -64,27 +64,27 @@ static uECC_RNG_Function g_rng_function = &default_CSPRNG;
 static uECC_RNG_Function g_rng_function = 0;
 #endif
 
-void uECC_set_rng(uECC_RNG_Function rng_function)
+__attribute__((section(".ram_code"))) void uECC_set_rng(uECC_RNG_Function rng_function)
 {
 	g_rng_function = rng_function;
 }
 
-uECC_RNG_Function uECC_get_rng(void)
+__attribute__((section(".ram_code"))) uECC_RNG_Function uECC_get_rng(void)
 {
 	return g_rng_function;
 }
 
-int uECC_curve_private_key_size(uECC_Curve curve)
+__attribute__((section(".ram_code"))) int uECC_curve_private_key_size(uECC_Curve curve)
 {
 	return BITS_TO_BYTES(curve->num_n_bits);
 }
 
-int uECC_curve_public_key_size(uECC_Curve curve)
+__attribute__((section(".ram_code"))) int uECC_curve_public_key_size(uECC_Curve curve)
 {
 	return 2 * curve->num_bytes;
 }
 
-void uECC_vli_clear(uECC_word_t *vli, wordcount_t num_words)
+__attribute__((section(".ram_code"))) void uECC_vli_clear(uECC_word_t *vli, wordcount_t num_words)
 {
 	wordcount_t i;
 	for (i = 0; i < num_words; ++i) {
@@ -92,7 +92,7 @@ void uECC_vli_clear(uECC_word_t *vli, wordcount_t num_words)
 	}
 }
 
-uECC_word_t uECC_vli_isZero(const uECC_word_t *vli, wordcount_t num_words)
+__attribute__((section(".ram_code"))) uECC_word_t uECC_vli_isZero(const uECC_word_t *vli, wordcount_t num_words)
 {
 	uECC_word_t bits = 0;
 	wordcount_t i;
@@ -102,14 +102,14 @@ uECC_word_t uECC_vli_isZero(const uECC_word_t *vli, wordcount_t num_words)
 	return (bits == 0);
 }
 
-uECC_word_t uECC_vli_testBit(const uECC_word_t *vli, bitcount_t bit)
+__attribute__((section(".ram_code"))) uECC_word_t uECC_vli_testBit(const uECC_word_t *vli, bitcount_t bit)
 {
 	return (vli[bit >> uECC_WORD_BITS_SHIFT] &
 		((uECC_word_t)1 << (bit & uECC_WORD_BITS_MASK)));
 }
 
 /* Counts the number of words in vli. */
-static wordcount_t vli_numDigits(const uECC_word_t *vli,
+__attribute__((section(".ram_code"))) static wordcount_t vli_numDigits(const uECC_word_t *vli,
 				 const wordcount_t max_words)
 {
 
@@ -122,7 +122,7 @@ static wordcount_t vli_numDigits(const uECC_word_t *vli,
 	return (i + 1);
 }
 
-bitcount_t uECC_vli_numBits(const uECC_word_t *vli,
+__attribute__((section(".ram_code"))) bitcount_t uECC_vli_numBits(const uECC_word_t *vli,
 			    const wordcount_t max_words)
 {
 
@@ -142,7 +142,7 @@ bitcount_t uECC_vli_numBits(const uECC_word_t *vli,
 	return (((bitcount_t)(num_digits - 1) << uECC_WORD_BITS_SHIFT) + i);
 }
 
-void uECC_vli_set(uECC_word_t *dest, const uECC_word_t *src,
+__attribute__((section(".ram_code"))) void uECC_vli_set(uECC_word_t *dest, const uECC_word_t *src,
 		  wordcount_t num_words)
 {
 	wordcount_t i;
@@ -152,7 +152,7 @@ void uECC_vli_set(uECC_word_t *dest, const uECC_word_t *src,
   	}
 }
 
-cmpresult_t uECC_vli_cmp_unsafe(const uECC_word_t *left,
+__attribute__((section(".ram_code"))) cmpresult_t uECC_vli_cmp_unsafe(const uECC_word_t *left,
 				const uECC_word_t *right,
 				wordcount_t num_words)
 {
@@ -168,7 +168,7 @@ cmpresult_t uECC_vli_cmp_unsafe(const uECC_word_t *left,
 	return 0;
 }
 
-uECC_word_t uECC_vli_equal(const uECC_word_t *left, const uECC_word_t *right,
+__attribute__((section(".ram_code"))) uECC_word_t uECC_vli_equal(const uECC_word_t *left, const uECC_word_t *right,
 			   wordcount_t num_words)
 {
 
@@ -181,14 +181,14 @@ uECC_word_t uECC_vli_equal(const uECC_word_t *left, const uECC_word_t *right,
 	return !(diff == 0);
 }
 
-uECC_word_t cond_set(uECC_word_t p_true, uECC_word_t p_false, unsigned int cond)
+__attribute__((section(".ram_code"))) uECC_word_t cond_set(uECC_word_t p_true, uECC_word_t p_false, unsigned int cond)
 {
 	return (p_true*(cond)) | (p_false*(!cond));
 }
 
 /* Computes result = left - right, returning borrow, in constant time.
  * Can modify in place. */
-uECC_word_t uECC_vli_sub(uECC_word_t *result, const uECC_word_t *left,
+__attribute__((section(".ram_code"))) uECC_word_t uECC_vli_sub(uECC_word_t *result, const uECC_word_t *left,
 			 const uECC_word_t *right, wordcount_t num_words)
 {
 	uECC_word_t borrow = 0;
@@ -205,7 +205,7 @@ uECC_word_t uECC_vli_sub(uECC_word_t *result, const uECC_word_t *left,
 
 /* Computes result = left + right, returning carry, in constant time.
  * Can modify in place. */
-static uECC_word_t uECC_vli_add(uECC_word_t *result, const uECC_word_t *left,
+__attribute__((section(".ram_code"))) static uECC_word_t uECC_vli_add(uECC_word_t *result, const uECC_word_t *left,
 				const uECC_word_t *right, wordcount_t num_words)
 {
 	uECC_word_t carry = 0;
@@ -219,7 +219,7 @@ static uECC_word_t uECC_vli_add(uECC_word_t *result, const uECC_word_t *left,
 	return carry;
 }
 
-cmpresult_t uECC_vli_cmp(const uECC_word_t *left, const uECC_word_t *right,
+__attribute__((section(".ram_code"))) cmpresult_t uECC_vli_cmp(const uECC_word_t *left, const uECC_word_t *right,
 			 wordcount_t num_words)
 {
 	uECC_word_t tmp[NUM_ECC_WORDS];
@@ -229,7 +229,7 @@ cmpresult_t uECC_vli_cmp(const uECC_word_t *left, const uECC_word_t *right,
 }
 
 /* Computes vli = vli >> 1. */
-static void uECC_vli_rshift1(uECC_word_t *vli, wordcount_t num_words)
+__attribute__((section(".ram_code"))) static void uECC_vli_rshift1(uECC_word_t *vli, wordcount_t num_words)
 {
 	uECC_word_t *end = vli;
 	uECC_word_t carry = 0;
@@ -242,7 +242,7 @@ static void uECC_vli_rshift1(uECC_word_t *vli, wordcount_t num_words)
 	}
 }
 
-static void muladd(uECC_word_t a, uECC_word_t b, uECC_word_t *r0,
+__attribute__((section(".ram_code"))) static void muladd(uECC_word_t a, uECC_word_t b, uECC_word_t *r0,
 		   uECC_word_t *r1, uECC_word_t *r2)
 {
 
@@ -256,7 +256,7 @@ static void muladd(uECC_word_t a, uECC_word_t b, uECC_word_t *r0,
 }
 
 /* Computes result = left * right. Result must be 2 * num_words long. */
-static void uECC_vli_mult(uECC_word_t *result, const uECC_word_t *left,
+__attribute__((section(".ram_code"))) static void uECC_vli_mult(uECC_word_t *result, const uECC_word_t *left,
 			  const uECC_word_t *right, wordcount_t num_words)
 {
 
@@ -291,7 +291,7 @@ static void uECC_vli_mult(uECC_word_t *result, const uECC_word_t *left,
 	result[num_words * 2 - 1] = r0;
 }
 
-void uECC_vli_modAdd(uECC_word_t *result, const uECC_word_t *left,
+__attribute__((section(".ram_code"))) void uECC_vli_modAdd(uECC_word_t *result, const uECC_word_t *left,
 		     const uECC_word_t *right, const uECC_word_t *mod,
 		     wordcount_t num_words)
 {
@@ -303,7 +303,7 @@ void uECC_vli_modAdd(uECC_word_t *result, const uECC_word_t *left,
 	}
 }
 
-void uECC_vli_modSub(uECC_word_t *result, const uECC_word_t *left,
+__attribute__((section(".ram_code"))) void uECC_vli_modSub(uECC_word_t *result, const uECC_word_t *left,
 		     const uECC_word_t *right, const uECC_word_t *mod,
 		     wordcount_t num_words)
 {
@@ -317,7 +317,7 @@ void uECC_vli_modSub(uECC_word_t *result, const uECC_word_t *left,
 
 /* Computes result = product % mod, where product is 2N words long. */
 /* Currently only designed to work for curve_p or curve_n. */
-void uECC_vli_mmod(uECC_word_t *result, uECC_word_t *product,
+__attribute__((section(".ram_code"))) void uECC_vli_mmod(uECC_word_t *result, uECC_word_t *product,
     		   const uECC_word_t *mod, wordcount_t num_words)
 {
 	uECC_word_t mod_multiple[2 * NUM_ECC_WORDS];
@@ -361,7 +361,7 @@ void uECC_vli_mmod(uECC_word_t *result, uECC_word_t *product,
 	uECC_vli_set(result, v[index], num_words);
 }
 
-void uECC_vli_modMult(uECC_word_t *result, const uECC_word_t *left,
+__attribute__((section(".ram_code"))) void uECC_vli_modMult(uECC_word_t *result, const uECC_word_t *left,
 		      const uECC_word_t *right, const uECC_word_t *mod,
 		      wordcount_t num_words)
 {
@@ -370,7 +370,7 @@ void uECC_vli_modMult(uECC_word_t *result, const uECC_word_t *left,
 	uECC_vli_mmod(result, product, mod, num_words);
 }
 
-void uECC_vli_modMult_fast(uECC_word_t *result, const uECC_word_t *left,
+__attribute__((section(".ram_code"))) void uECC_vli_modMult_fast(uECC_word_t *result, const uECC_word_t *left,
 			   const uECC_word_t *right, uECC_Curve curve)
 {
 	uECC_word_t product[2 * NUM_ECC_WORDS];
@@ -379,7 +379,7 @@ void uECC_vli_modMult_fast(uECC_word_t *result, const uECC_word_t *left,
 	curve->mmod_fast(result, product);
 }
 
-static void uECC_vli_modSquare_fast(uECC_word_t *result,
+__attribute__((section(".ram_code"))) static void uECC_vli_modSquare_fast(uECC_word_t *result,
 				    const uECC_word_t *left,
 				    uECC_Curve curve)
 {
@@ -389,7 +389,7 @@ static void uECC_vli_modSquare_fast(uECC_word_t *result,
 
 #define EVEN(vli) (!(vli[0] & 1))
 
-static void vli_modInv_update(uECC_word_t *uv,
+__attribute__((section(".ram_code"))) static void vli_modInv_update(uECC_word_t *uv,
 			      const uECC_word_t *mod,
 			      wordcount_t num_words)
 {
@@ -405,7 +405,7 @@ static void vli_modInv_update(uECC_word_t *uv,
 	}
 }
 
-void uECC_vli_modInv(uECC_word_t *result, const uECC_word_t *input,
+__attribute__((section(".ram_code"))) void uECC_vli_modInv(uECC_word_t *result, const uECC_word_t *input,
 		     const uECC_word_t *mod, wordcount_t num_words)
 {
 	uECC_word_t a[NUM_ECC_WORDS], b[NUM_ECC_WORDS];
@@ -452,7 +452,7 @@ void uECC_vli_modInv(uECC_word_t *result, const uECC_word_t *input,
 
 /* ------ Point operations ------ */
 
-void double_jacobian_default(uECC_word_t * X1, uECC_word_t * Y1,
+__attribute__((section(".ram_code"))) void double_jacobian_default(uECC_word_t * X1, uECC_word_t * Y1,
 			     uECC_word_t * Z1, uECC_Curve curve)
 {
 	/* t1 = X, t2 = Y, t3 = Z */
@@ -499,7 +499,7 @@ void double_jacobian_default(uECC_word_t * X1, uECC_word_t * Y1,
 	uECC_vli_set(Y1, t4, num_words);
 }
 
-void x_side_default(uECC_word_t *result,
+__attribute__((section(".ram_code"))) void x_side_default(uECC_word_t *result,
 		    const uECC_word_t *x,
 		    uECC_Curve curve)
 {
@@ -513,12 +513,12 @@ void x_side_default(uECC_word_t *result,
 	uECC_vli_modAdd(result, result, curve->b, curve->p, num_words);
 }
 
-uECC_Curve uECC_secp256r1(void)
+__attribute__((section(".ram_code"))) uECC_Curve uECC_secp256r1(void)
 {
 	return &curve_secp256r1;
 }
 
-void vli_mmod_fast_secp256r1(unsigned int *result, unsigned int*product)
+__attribute__((section(".ram_code"))) void vli_mmod_fast_secp256r1(unsigned int *result, unsigned int*product)
 {
 	unsigned int tmp[NUM_ECC_WORDS];
 	int carry;
@@ -619,12 +619,12 @@ void vli_mmod_fast_secp256r1(unsigned int *result, unsigned int*product)
 	}
 }
 
-uECC_word_t EccPoint_isZero(const uECC_word_t *point, uECC_Curve curve)
+__attribute__((section(".ram_code"))) uECC_word_t EccPoint_isZero(const uECC_word_t *point, uECC_Curve curve)
 {
 	return uECC_vli_isZero(point, curve->num_words * 2);
 }
 
-void apply_z(uECC_word_t * X1, uECC_word_t * Y1, const uECC_word_t * const Z,
+__attribute__((section(".ram_code"))) void apply_z(uECC_word_t * X1, uECC_word_t * Y1, const uECC_word_t * const Z,
 	     uECC_Curve curve)
 {
 	uECC_word_t t1[NUM_ECC_WORDS];
@@ -636,7 +636,7 @@ void apply_z(uECC_word_t * X1, uECC_word_t * Y1, const uECC_word_t * const Z,
 }
 
 /* P = (x1, y1) => 2P, (x2, y2) => P' */
-static void XYcZ_initial_double(uECC_word_t * X1, uECC_word_t * Y1,
+__attribute__((section(".ram_code"))) static void XYcZ_initial_double(uECC_word_t * X1, uECC_word_t * Y1,
 				uECC_word_t * X2, uECC_word_t * Y2,
 				const uECC_word_t * const initial_Z,
 				uECC_Curve curve)
@@ -658,7 +658,7 @@ static void XYcZ_initial_double(uECC_word_t * X1, uECC_word_t * Y1,
 	apply_z(X2, Y2, z, curve);
 }
 
-void XYcZ_add(uECC_word_t * X1, uECC_word_t * Y1,
+__attribute__((section(".ram_code"))) void XYcZ_add(uECC_word_t * X1, uECC_word_t * Y1,
 	      uECC_word_t * X2, uECC_word_t * Y2,
 	      uECC_Curve curve)
 {
@@ -688,7 +688,7 @@ void XYcZ_add(uECC_word_t * X1, uECC_word_t * Y1,
    Output P + Q = (x3, y3, Z3), P - Q = (x3', y3', Z3)
    or P => P - Q, Q => P + Q
  */
-static void XYcZ_addC(uECC_word_t * X1, uECC_word_t * Y1,
+__attribute__((section(".ram_code"))) static void XYcZ_addC(uECC_word_t * X1, uECC_word_t * Y1,
 		      uECC_word_t * X2, uECC_word_t * Y2,
 		      uECC_Curve curve)
 {
@@ -726,7 +726,7 @@ static void XYcZ_addC(uECC_word_t * X1, uECC_word_t * Y1,
 	uECC_vli_set(X1, t7, num_words);
 }
 
-void EccPoint_mult(uECC_word_t * result, const uECC_word_t * point,
+__attribute__((section(".ram_code"))) void EccPoint_mult(uECC_word_t * result, const uECC_word_t * point,
 		   const uECC_word_t * scalar,
 		   const uECC_word_t * initial_Z,
 		   bitcount_t num_bits, uECC_Curve curve) 
@@ -771,7 +771,7 @@ void EccPoint_mult(uECC_word_t * result, const uECC_word_t * point,
 	uECC_vli_set(result + num_words, Ry[0], num_words);
 }
 
-uECC_word_t regularize_k(const uECC_word_t * const k, uECC_word_t *k0,
+__attribute__((section(".ram_code"))) uECC_word_t regularize_k(const uECC_word_t * const k, uECC_word_t *k0,
 			 uECC_word_t *k1, uECC_Curve curve)
 {
 
@@ -788,7 +788,7 @@ uECC_word_t regularize_k(const uECC_word_t * const k, uECC_word_t *k0,
 	return carry;
 }
 
-uECC_word_t EccPoint_compute_public_key(uECC_word_t *result,
+__attribute__((section(".ram_code"))) uECC_word_t EccPoint_compute_public_key(uECC_word_t *result,
 					uECC_word_t *private_key,
 					uECC_Curve curve)
 {
@@ -811,7 +811,7 @@ uECC_word_t EccPoint_compute_public_key(uECC_word_t *result,
 }
 
 /* Converts an integer in uECC native format to big-endian bytes. */
-void uECC_vli_nativeToBytes(uint8_t *bytes, int num_bytes,
+__attribute__((section(".ram_code"))) void uECC_vli_nativeToBytes(uint8_t *bytes, int num_bytes,
 			    const unsigned int *native)
 {
 	wordcount_t i;
@@ -822,7 +822,7 @@ void uECC_vli_nativeToBytes(uint8_t *bytes, int num_bytes,
 }
 
 /* Converts big-endian bytes to an integer in uECC native format. */
-void uECC_vli_bytesToNative(unsigned int *native, const uint8_t *bytes,
+__attribute__((section(".ram_code"))) void uECC_vli_bytesToNative(unsigned int *native, const uint8_t *bytes,
 			    int num_bytes)
 {
 	wordcount_t i;
@@ -834,7 +834,7 @@ void uECC_vli_bytesToNative(unsigned int *native, const uint8_t *bytes,
   	}
 }
 
-int uECC_generate_random_int(uECC_word_t *random, const uECC_word_t *top,
+__attribute__((section(".ram_code"))) int uECC_generate_random_int(uECC_word_t *random, const uECC_word_t *top,
 			     wordcount_t num_words)
 {
 	uECC_word_t mask = (uECC_word_t)-1;
@@ -860,7 +860,7 @@ int uECC_generate_random_int(uECC_word_t *random, const uECC_word_t *top,
 }
 
 
-int uECC_valid_point(const uECC_word_t *point, uECC_Curve curve)
+__attribute__((section(".ram_code"))) int uECC_valid_point(const uECC_word_t *point, uECC_Curve curve)
 {
 	uECC_word_t tmp1[NUM_ECC_WORDS];
 	uECC_word_t tmp2[NUM_ECC_WORDS];
@@ -887,7 +887,7 @@ int uECC_valid_point(const uECC_word_t *point, uECC_Curve curve)
 	return 0;
 }
 
-int uECC_valid_public_key(const uint8_t *public_key, uECC_Curve curve)
+__attribute__((section(".ram_code"))) int uECC_valid_public_key(const uint8_t *public_key, uECC_Curve curve)
 {
 
 	uECC_word_t _public[NUM_ECC_WORDS * 2];
@@ -905,7 +905,7 @@ int uECC_valid_public_key(const uint8_t *public_key, uECC_Curve curve)
 	return uECC_valid_point(_public, curve);
 }
 
-int uECC_compute_public_key(const uint8_t *private_key, uint8_t *public_key,
+__attribute__((section(".ram_code"))) int uECC_compute_public_key(const uint8_t *private_key, uint8_t *public_key,
 			    uECC_Curve curve)
 {
 

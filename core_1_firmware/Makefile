@@ -33,14 +33,14 @@ all: sram.bin main_ram.bin
 
 
 sram.bin: demo.elf
-	$(OBJCOPY) -O binary -R .data -R .ram_text $< $@
+	$(OBJCOPY) -O binary -R .my_ram $< $@
 
 ifneq ($(OS),Windows_NT)
 	chmod -x $@
 endif
 
 main_ram.bin: demo.elf
-	$(OBJCOPY) -O binary -j .data -j .ram_text $< $@
+	$(OBJCOPY) -O binary -j .my_ram $< $@
 
 ifneq ($(OS),Windows_NT)
 	chmod -x $@

@@ -98,7 +98,7 @@ typedef struct {
  *  @param plen IN -- personalization length in bytes
  *
  */
-int tc_ctr_prng_init(TCCtrPrng_t * const ctx, 
+__attribute__((section(".ram_code"))) __attribute__((section(".ram_code"))) int tc_ctr_prng_init(TCCtrPrng_t * const ctx, 
 		     uint8_t const * const entropy,
 		     unsigned int entropyLen, 
 		     uint8_t const * const personalization,
@@ -123,7 +123,7 @@ int tc_ctr_prng_init(TCCtrPrng_t * const ctx,
  *  @param additional_input IN -- additional input to the prng (may be null)
  *  @param additionallen IN -- additional input length in bytes
  */
-int tc_ctr_prng_reseed(TCCtrPrng_t * const ctx, 
+__attribute__((section(".ram_code"))) int tc_ctr_prng_reseed(TCCtrPrng_t * const ctx, 
 		       uint8_t const * const entropy,
 		       unsigned int entropyLen,
 		       uint8_t const * const additional_input,
@@ -145,7 +145,7 @@ int tc_ctr_prng_reseed(TCCtrPrng_t * const ctx,
  *  @param out IN/OUT -- buffer to receive output
  *  @param outlen IN -- size of out buffer in bytes
  */
-int tc_ctr_prng_generate(TCCtrPrng_t * const ctx,
+__attribute__((section(".ram_code"))) int tc_ctr_prng_generate(TCCtrPrng_t * const ctx,
 			 uint8_t const * const additional_input,
 			 unsigned int additionallen,
 			 uint8_t * const out,
@@ -157,7 +157,7 @@ int tc_ctr_prng_generate(TCCtrPrng_t * const ctx,
  *  @return none
  *  @param ctx IN/OUT -- the PRNG context
  */
-void tc_ctr_prng_uninstantiate(TCCtrPrng_t * const ctx);
+__attribute__((section(".ram_code"))) void tc_ctr_prng_uninstantiate(TCCtrPrng_t * const ctx);
 
 #ifdef __cplusplus
 }

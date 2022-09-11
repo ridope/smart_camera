@@ -89,7 +89,7 @@ typedef struct tc_hmac_state_struct *TCHmacState_t;
  * @param key IN -- the HMAC key to configure
  * @param key_size IN -- the HMAC key size
  */
-int tc_hmac_set_key(TCHmacState_t ctx, const uint8_t *key,
+__attribute__((section(".ram_code"))) int tc_hmac_set_key(TCHmacState_t ctx, const uint8_t *key,
 		    unsigned int key_size);
 
 /**
@@ -99,7 +99,7 @@ int tc_hmac_set_key(TCHmacState_t ctx, const uint8_t *key,
  *         returns TC_CRYPTO_FAIL (0) if: ctx == NULL or key == NULL
  * @param ctx IN/OUT -- struct tc_hmac_state_struct buffer to init
  */
-int tc_hmac_init(TCHmacState_t ctx);
+__attribute__((section(".ram_code"))) int tc_hmac_init(TCHmacState_t ctx);
 
 /**
  *  @brief HMAC update procedure
@@ -111,7 +111,7 @@ int tc_hmac_init(TCHmacState_t ctx);
  *  @param data IN -- data to incorporate into state
  *  @param data_length IN -- size of data in bytes
  */
-int tc_hmac_update(TCHmacState_t ctx, const void *data,
+__attribute__((section(".ram_code"))) int tc_hmac_update(TCHmacState_t ctx, const void *data,
 		   unsigned int data_length);
 
 /**
@@ -130,7 +130,7 @@ int tc_hmac_update(TCHmacState_t ctx, const void *data,
  *  @param taglen IN -- size of tag in bytes
  *  @param ctx IN/OUT -- the HMAC state for computing tag
  */
-int tc_hmac_final(uint8_t *tag, unsigned int taglen, TCHmacState_t ctx);
+__attribute__((section(".ram_code"))) int tc_hmac_final(uint8_t *tag, unsigned int taglen, TCHmacState_t ctx);
 
 #ifdef __cplusplus
 }

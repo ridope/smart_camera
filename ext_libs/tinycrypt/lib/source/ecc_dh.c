@@ -60,7 +60,7 @@
 #include <tinycrypt/utils.h>
 #include <string.h>
 
-int uECC_make_key_with_d(uint8_t *public_key, uint8_t *private_key,
+__attribute__((section(".ram_code"))) int uECC_make_key_with_d(uint8_t *public_key, uint8_t *private_key,
 			 unsigned int *d, uECC_Curve curve)
 {
 
@@ -94,7 +94,7 @@ int uECC_make_key_with_d(uint8_t *public_key, uint8_t *private_key,
 	return 0;
 }
 
-int uECC_make_key(uint8_t *public_key, uint8_t *private_key, uECC_Curve curve)
+__attribute__((section(".ram_code"))) int uECC_make_key(uint8_t *public_key, uint8_t *private_key, uECC_Curve curve)
 {
 
 	uECC_word_t _random[NUM_ECC_WORDS * 2];
@@ -136,7 +136,7 @@ int uECC_make_key(uint8_t *public_key, uint8_t *private_key, uECC_Curve curve)
 	return 0;
 }
 
-int uECC_shared_secret(const uint8_t *public_key, const uint8_t *private_key,
+__attribute__((section(".ram_code"))) int uECC_shared_secret(const uint8_t *public_key, const uint8_t *private_key,
 		       uint8_t *secret, uECC_Curve curve)
 {
 
