@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include "../core_1_firmware/data.h"
 
+void amp_send_init(void);
 void amp_send_class(uint8_t class);
 
 #endif

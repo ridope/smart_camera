@@ -19,7 +19,7 @@
 /* Uart                                                                  */
 /*-----------------------------------------------------------------------*/
 
-float *f_img = &img;
+float *f_img = (float *)&img;
 
 static char *readstr(void)
 {
@@ -77,7 +77,7 @@ static char *get_token(char **str)
 
 static void prompt(void)
 {
-    printf("\e[92;1mCore0\e[0m> ");
+    printf("\e[92;1mfemtrov-console\e[0m> ");
 }
 
 /*-----------------------------------------------------------------------*/
@@ -140,12 +140,6 @@ static void led_cmd(void)
 }
 #endif
 
-extern void sum(void);
-
-static void sum_cmd(void)
-{
-    sum();
-}
 
 /*-----------------------------------------------------------------------*/
 /* Console service / Main                                                */
@@ -168,21 +162,11 @@ static void console_service(void)
 		led_cmd();
 #endif
     else if(strcmp(token, "enc") == 0){
-        char *str;
-	    char *class;
+	    int class = predict(f_img);
 
-        printf("Predicted: %d\n", predict(f_img));
+        printf("Predicted: %d\n", class);
 
-        /* Reading class encryption */
-        printf("\e[94;1mInsert the class\e[0m> ");
-        do
-        {
-            str = readstr();
-        }while(str == NULL);
-
-        class = get_token(&str);
-
-        amp_send_class(atoi(class));
+        amp_send_class(class);
     }
 
 
@@ -196,6 +180,7 @@ int main(void)
 	irq_setie(1);
 #endif
     uart_init();
+    amp_send_init();
 
     help();
     prompt();

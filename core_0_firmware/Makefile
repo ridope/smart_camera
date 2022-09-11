@@ -26,7 +26,7 @@ endif
 vpath %.a $(PACKAGES:%=../%)
 
 demo.elf: $(OBJECTS)
-	$(CC) -Os $(LDFLAGS) -Wl,-Map=output.map -Wl,--print-memory-usage -T linker.ld -N -o $@ \
+	$(CC) -Os $(LDFLAGS) -Wl,--print-memory-usage -T linker.ld -N -o $@ \
 		$(OBJECTS) \
 		$(PACKAGES:%=-L$(BUILD_DIR)/software/%) \
 		$(LIBS:lib%=-l%) \

@@ -135,6 +135,8 @@ static void console_service(void)
             printf("\e[91;1mError updating the nonce: struct pointer is NULL\e[0m\n");
         }
 
+        printf("Class received: %d\n", data.flag);
+
 
         result = amp_aes_encrypts(&data);
 
