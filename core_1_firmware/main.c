@@ -135,7 +135,7 @@ static void console_service(void)
             printf("\e[91;1mError updating the nonce: struct pointer is NULL\e[0m\n");
         }
 
-        printf("Class received: %d\n", data.flag);
+        printf("Class received: %d\n", data.predicted_class);
 
 
         result = amp_aes_encrypts(&data);
@@ -162,7 +162,7 @@ int main(void)
 	irq_setie(1);
 #endif
     uart_init();
-
+    
     help();
 
     amp_aes_init(&data);

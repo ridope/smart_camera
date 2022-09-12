@@ -5,7 +5,7 @@ __DYNAMIC = 0;
 
 INCLUDE /generated/regions.ld
 
-STACK_SIZE = 0x1000; /* 4 kB */
+STACK_SIZE = 0x1080; /* 4 kB */
 
 SECTIONS
 {
@@ -23,7 +23,8 @@ SECTIONS
 
 	.my_ram :
 	{
-		*(.ram_code)
+		KEEP(*(.ram_code));
+		_fheap = .;
 	} > main_ram
 
 	.rodata :
@@ -78,7 +79,7 @@ SECTIONS
 	
 }
 
-PROVIDE(__heap_start = _edata );
+PROVIDE(__heap_start = _fheap );
 PROVIDE(__heap_end = ORIGIN(main_ram) + LENGTH(main_ram));
 PROVIDE(_fdata_rom = LOADADDR(.data));
 PROVIDE(_edata_rom = LOADADDR(.data) + SIZEOF(.data));

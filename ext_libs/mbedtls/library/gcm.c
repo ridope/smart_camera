@@ -329,7 +329,7 @@ __attribute__((section(".ram_code"))) int mbedtls_gcm_starts( mbedtls_gcm_contex
  *                                      the data ends now.
  */
 __attribute__((section(".ram_code"))) int mbedtls_gcm_update_ad( mbedtls_gcm_context *ctx,
-                           const unsigned char *add, size_t add_len )
+                           const unsigned char *add, int add_len )
 {
     const unsigned char *p;
     size_t use_len, i, offset;

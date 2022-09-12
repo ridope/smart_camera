@@ -258,7 +258,7 @@ __attribute__((section(".ram_code"))) int mbedtls_gcm_starts( mbedtls_gcm_contex
  */
 __attribute__((section(".ram_code"))) int mbedtls_gcm_update_ad( mbedtls_gcm_context *ctx,
                            const unsigned char *add,
-                           size_t add_len );
+                           int add_len );
 
 /**
  * \brief           This function feeds an input buffer into an ongoing GCM

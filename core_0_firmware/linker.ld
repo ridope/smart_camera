@@ -6,6 +6,7 @@ __DYNAMIC = 0;
 INCLUDE /generated/regions.ld
 
 STACK_SIZE = 0x1000; /* 4 kB */
+HEAP_SIZE = 0x1000; /* 4 kB */
 
 SECTIONS
 {
@@ -44,6 +45,11 @@ SECTIONS
 		_edata = .;
 	} > sram 
 
+	joseph :
+	{
+		*(joseph)
+	} > mmap_m_0 AT > sram
+
 	.bss :
 	{
 		. = ALIGN(8);
@@ -59,10 +65,14 @@ SECTIONS
 		_end = .;
 	} > sram
 
-	joseph :
-	{
-		*(joseph)
-	} > mmap_m_0 AT > sram
+	.heap (NOLOAD) :
+    {
+        . = ALIGN(8);
+		_fheap = .;
+        . = . + HEAP_SIZE;
+        . = ALIGN(8);
+		_eheap = .;
+    } > sram
 
 	.stack (NOLOAD) :
     {
@@ -73,7 +83,7 @@ SECTIONS
     } > sram
 }
 
-PROVIDE(__heap_start = _end );
-PROVIDE(__heap_end = ORIGIN(sram) + LENGTH(sram));
+PROVIDE(__heap_start = _fheap );
+PROVIDE(__heap_end = _eheap);
 PROVIDE(_fdata_rom = LOADADDR(.data));
 PROVIDE(_edata_rom = LOADADDR(.data) + SIZEOF(.data));

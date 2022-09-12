@@ -56,8 +56,7 @@ demo.elf: $(OBJECTS)
 		-L$(MBED_LIB) \
 		$(LIBS:lib%=-l%) \
 		-ltinycrypt \
-		-lmbedcrypto \
-		-lgcc
+		-lmbedcrypto
 
 ifneq ($(OS),Windows_NT)
 	chmod -x $@
