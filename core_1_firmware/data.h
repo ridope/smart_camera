@@ -19,11 +19,19 @@
 
 #define CLASS_SIZE        1
 
-typedef struct DATA {
-    uint8_t nonce[NONCE_SIZE];
-    uint8_t key[KEY_SIZE_BYTES];
+typedef struct SHARED_DATA {
     uint8_t predicted_class;
     int flag;
-} DATA;
+
+    uint8_t tag[MAC_LEN];
+    uint8_t ciphertext[CLASS_SIZE];
+} shared_data_t;
+
+typedef struct PRIVATE_FIREV_DATA {
+    uint8_t nonce[NONCE_SIZE];
+    uint8_t key[KEY_SIZE_BYTES];
+    uint8_t tag[MAC_LEN];
+    uint8_t ciphertext[CLASS_SIZE];
+} private_firev_data_t;
 
 #endif

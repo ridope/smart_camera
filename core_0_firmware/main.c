@@ -6,7 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "send.h"
+#include "amp_send.h"
+#include "amp_utils.h"
 #include "svm_model.h"
 #include "img.h"
 
@@ -162,9 +163,17 @@ static void console_service(void)
 		led_cmd();
 #endif
     else if(strcmp(token, "enc") == 0){
-	    int class = predict(f_img);
 
-        printf("Predicted: %d\n", class);
+        uint32_t time_begin = amp_millis();
+	    int class = predict(f_img);
+        uint32_t time_end = amp_millis();
+
+        float time_spent_ms = (time_begin - time_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+
+        /* Allowing printf to display float will increase code size, so the parts of the float number are being extracted belw */
+        int f_left = (int)time_spent_ms;
+        int f_right = ((float)(time_spent_ms - f_left)*1000.0);
+        printf("Predicted class: %d in %d.%d ms\n", class, f_left, f_right);
 
         amp_send_class(class);
     }
@@ -181,6 +190,7 @@ int main(void)
 #endif
     uart_init();
     amp_send_init();
+    amp_millis_init();
 
     help();
     prompt();

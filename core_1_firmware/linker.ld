@@ -23,8 +23,10 @@ SECTIONS
 
 	.my_ram :
 	{
+		. = ALIGN(8);
 		KEEP(*(.ram_code));
 		_fheap = .;
+		. = ALIGN(8);
 	} > main_ram
 
 	.rodata :
@@ -64,10 +66,19 @@ SECTIONS
 		_end = .;
 	} > sram 
 
-	joseph :
+	.shared_ram :
 	{
-		*(joseph)
+		. = ALIGN(8);
+		KEEP(*(shared_ram));
+		. = ALIGN(8);
 	} > mmap_m_0 AT > sram
+
+	.private_ram :
+	{
+		. = ALIGN(8);
+		KEEP(*(priv_sp));
+		. = ALIGN(8);
+	} > mmap_m_1 AT > sram
 
 	.stack (NOLOAD) :
     {

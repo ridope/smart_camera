@@ -17,7 +17,8 @@
 #include <mbedtls/gcm.h>
 #include <mbedtls/cipher.h>
 
-DATA data __attribute__ ((section ("joseph"))) ;
+shared_data_t ctrl_data __attribute__ ((section ("shared_ram"))) ;
+private_firev_data_t priv_data __attribute__ ((section ("priv_sp"))) ;
 
 /*-----------------------------------------------------------------------*/
 /* Uart                                                                  */
@@ -125,31 +126,18 @@ static void console_service(void)
     else if(strcmp(token, "reboot") == 0)
         reboot_cmd();
     else if(strcmp(token, "enc") == 0){
-        int result = 0;
+        if(ctrl_data.flag == 1){
+            printf("Class received: %d\n", ctrl_data.predicted_class);
 
-        // TODO: Only call this function if an encryption can be performed
-        result = amp_aes_update_nonce(&data);
+            int result = 0;
+            result = amp_aes_update_nonce(&priv_data);
+            result = amp_aes_encrypts(&ctrl_data, &priv_data);
 
-        if (result == -1)
-        {
-            printf("\e[91;1mError updating the nonce: struct pointer is NULL\e[0m\n");
+            if (result != 0)
+            {
+                printf("\e[91;1mError in the encryption. Err= %d\e[0m\n", result);
+            }
         }
-
-        printf("Class received: %d\n", data.predicted_class);
-
-
-        result = amp_aes_encrypts(&data);
-
-        if (result == -1)
-        {
-            printf("\e[91;1mError in the encryption: struct pointer is NULL\e[0m\n");
-        }
-        else if (result == -4)
-        {
-            printf("\e[91;1mError in the encryption: flag is not active\e[0m\n");
-        }
-
-
     }
 
     prompt();
@@ -165,10 +153,10 @@ int main(void)
     
     help();
 
-    amp_aes_init(&data);
+    amp_aes_init(&priv_data);
 
     /* Initing nonce */
-    amp_aes_update_nonce(&data);
+    amp_aes_update_nonce(&priv_data);
 
     prompt();
 

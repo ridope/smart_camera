@@ -4,9 +4,10 @@ include $(BUILD_DIR)/software/include/generated/variables.mak
 include $(SOC_DIRECTORY)/software/common.mak
 
 OBJDIR = ./obj
-OBJECTS := $(OBJDIR)/send.o \
+OBJECTS := $(OBJDIR)/amp_send.o \
 			$(OBJDIR)/svm_model.o 	\
 			$(OBJDIR)/crt0.o 	\
+			$(OBJDIR)/amp_utils.o 	\
 			$(OBJDIR)/main.o
 
 ifdef WITH_CXX
