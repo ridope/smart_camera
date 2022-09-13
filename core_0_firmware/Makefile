@@ -15,11 +15,17 @@ ifdef WITH_CXX
 endif
 
 
-all: demo.bin
+all: sram.bin sp.bin
 
 
-%.bin: %.elf
-	$(OBJCOPY) -O binary $< $@
+sram.bin: demo.elf
+	$(OBJCOPY) -R .private_ram -O binary $< $@
+ifneq ($(OS),Windows_NT)
+	chmod -x $@
+endif
+
+sp.bin: demo.elf
+	$(OBJCOPY) -j .private_ram -O binary $< $@
 ifneq ($(OS),Windows_NT)
 	chmod -x $@
 endif

@@ -33,4 +33,5 @@ typedef struct PRIVATE_FIREV_DATA {
     uint8_t ciphertext[CLASS_SIZE+MAC_LEN];
 } private_firev_data_t;
 
+
 #endif
