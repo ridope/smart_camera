@@ -14,6 +14,7 @@ _VALID_CORE_NAME = {'firev', 'femtorv'}
 def main():
     parser = argparse.ArgumentParser(description="LiteX Bare Metal AES App on AMP Architecture.")
     parser.add_argument("--core_0", type=str, help="Core 0 name.", required=True)
+    parser.add_argument("--firmware_0", type=str, required=True, )
     parser.add_argument("--core_1",  type=str, help="Core 1 name", required=True)
     parser.add_argument("--build_dir", type=str, help="Build the target platform.", required=True)
     parser.add_argument('--make_clean', action="store_true", help="Make clean command to firmware folders.")
