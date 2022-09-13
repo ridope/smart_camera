@@ -130,7 +130,7 @@ struct uECC_Curve_t {
  * @param Z1 IN/OUT -- z coordinate
  * @param curve IN -- elliptic curve
  */
-__attribute__((section(".ram_code"))) void double_jacobian_default(uECC_word_t * X1, uECC_word_t * Y1,
+void double_jacobian_default(uECC_word_t * X1, uECC_word_t * Y1,
 			     uECC_word_t * Z1, uECC_Curve curve);
 
 /*
@@ -139,7 +139,7 @@ __attribute__((section(".ram_code"))) void double_jacobian_default(uECC_word_t *
  * @param x IN -- value of x
  * @param curve IN -- elliptic curve
  */
-__attribute__((section(".ram_code"))) void x_side_default(uECC_word_t *result, const uECC_word_t *x,
+void x_side_default(uECC_word_t *result, const uECC_word_t *x,
 		    uECC_Curve curve);
 
 /*
@@ -148,7 +148,7 @@ __attribute__((section(".ram_code"))) void x_side_default(uECC_word_t *result, c
  * @param result OUT -- product % curve_p
  * @param product IN -- value to be reduced mod curve_p
  */
-__attribute__((section(".ram_code"))) void vli_mmod_fast_secp256r1(unsigned int *result, unsigned int *product);
+void vli_mmod_fast_secp256r1(unsigned int *result, unsigned int *product);
 
 /* Bytes to words ordering: */
 #define BYTES_TO_WORDS_8(a, b, c, d, e, f, g, h) 0x##d##c##b##a, 0x##h##g##f##e
@@ -192,7 +192,7 @@ static const struct uECC_Curve_t curve_secp256r1 = {
         &vli_mmod_fast_secp256r1
 };
 
-__attribute__((section(".ram_code"))) uECC_Curve uECC_secp256r1(void);
+uECC_Curve uECC_secp256r1(void);
 
 /*
  * @brief Generates a random integer in the range 0 < random < top.
@@ -202,7 +202,7 @@ __attribute__((section(".ram_code"))) uECC_Curve uECC_secp256r1(void);
  * @param num_words IN -- number of words
  * @return a random integer in the range 0 < random < top
  */
-__attribute__((section(".ram_code"))) int uECC_generate_random_int(uECC_word_t *random, const uECC_word_t *top,
+int uECC_generate_random_int(uECC_word_t *random, const uECC_word_t *top,
 			     wordcount_t num_words);
 
 
@@ -222,7 +222,7 @@ __attribute__((section(".ram_code"))) int uECC_generate_random_int(uECC_word_t *
  * POSIX-compliant system that supports /dev/random or /dev/urandom, you can
  * define uECC_POSIX to use the predefined RNG.
  */
-__attribute__((section(".ram_code"))) typedef int(*uECC_RNG_Function)(uint8_t *dest, unsigned int size);
+typedef int(*uECC_RNG_Function)(uint8_t *dest, unsigned int size);
 
 /*
  * @brief Set the function that will be used to generate random bytes. The RNG
@@ -234,27 +234,27 @@ __attribute__((section(".ram_code"))) typedef int(*uECC_RNG_Function)(uint8_t *d
  *
  * @param rng_function IN -- function that will be used to generate random bytes
  */
-__attribute__((section(".ram_code"))) void uECC_set_rng(uECC_RNG_Function rng_function);
+void uECC_set_rng(uECC_RNG_Function rng_function);
 
 /*
  * @brief provides current uECC_RNG_Function.
  * @return Returns the function that will be used to generate random bytes.
  */
-__attribute__((section(".ram_code"))) uECC_RNG_Function uECC_get_rng(void);
+uECC_RNG_Function uECC_get_rng(void);
 
 /*
  * @brief computes the size of a private key for the curve in bytes.
  * @param curve IN -- elliptic curve
  * @return size of a private key for the curve in bytes.
  */
-__attribute__((section(".ram_code"))) int uECC_curve_private_key_size(uECC_Curve curve);
+int uECC_curve_private_key_size(uECC_Curve curve);
 
 /*
  * @brief computes the size of a public key for the curve in bytes.
  * @param curve IN -- elliptic curve
  * @return the size of a public key for the curve in bytes.
  */
-__attribute__((section(".ram_code"))) int uECC_curve_public_key_size(uECC_Curve curve);
+int uECC_curve_public_key_size(uECC_Curve curve);
 
 /*
  * @brief Compute the corresponding public key for a private key.
@@ -263,7 +263,7 @@ __attribute__((section(".ram_code"))) int uECC_curve_public_key_size(uECC_Curve 
  * @param curve
  * @return Returns 1 if key was computed successfully, 0 if an error occurred.
  */
-__attribute__((section(".ram_code"))) int uECC_compute_public_key(const uint8_t *private_key,
+int uECC_compute_public_key(const uint8_t *private_key,
 			    uint8_t *public_key, uECC_Curve curve);
 
 /*
@@ -273,7 +273,7 @@ __attribute__((section(".ram_code"))) int uECC_compute_public_key(const uint8_t 
  * @param private_key IN -- private-key
  * @param curve IN -- elliptic curve
  */
-__attribute__((section(".ram_code"))) uECC_word_t EccPoint_compute_public_key(uECC_word_t *result,
+uECC_word_t EccPoint_compute_public_key(uECC_word_t *result,
 					uECC_word_t *private_key, uECC_Curve curve);
 
 /*
@@ -285,7 +285,7 @@ __attribute__((section(".ram_code"))) uECC_word_t EccPoint_compute_public_key(uE
  * @param k1 IN/OUT -- regularized k
  * @param curve IN -- elliptic curve
  */
-__attribute__((section(".ram_code"))) uECC_word_t regularize_k(const uECC_word_t * const k, uECC_word_t *k0,
+uECC_word_t regularize_k(const uECC_word_t * const k, uECC_word_t *k0,
 			 uECC_word_t *k1, uECC_Curve curve);
 
 /*
@@ -299,7 +299,7 @@ __attribute__((section(".ram_code"))) uECC_word_t regularize_k(const uECC_word_t
  * @param num_bits IN -- number of bits in scalar
  * @param curve IN -- elliptic curve
  */
-__attribute__((section(".ram_code"))) void EccPoint_mult(uECC_word_t * result, const uECC_word_t * point,
+void EccPoint_mult(uECC_word_t * result, const uECC_word_t * point,
 		   const uECC_word_t * scalar, const uECC_word_t * initial_Z,
 		   bitcount_t num_bits, uECC_Curve curve);
 
@@ -309,7 +309,7 @@ __attribute__((section(".ram_code"))) void EccPoint_mult(uECC_word_t * result, c
  * @param num_words IN -- number of words in the vli
  * @return 1 if vli == 0, 0 otherwise.
  */
-__attribute__((section(".ram_code"))) uECC_word_t uECC_vli_isZero(const uECC_word_t *vli, wordcount_t num_words);
+uECC_word_t uECC_vli_isZero(const uECC_word_t *vli, wordcount_t num_words);
 
 /*
  * @brief Check if 'point' is the point at infinity
@@ -317,7 +317,7 @@ __attribute__((section(".ram_code"))) uECC_word_t uECC_vli_isZero(const uECC_wor
  * @param curve IN -- elliptic curve
  * @return if 'point' is the point at infinity, 0 otherwise.
  */
-__attribute__((section(".ram_code"))) uECC_word_t EccPoint_isZero(const uECC_word_t *point, uECC_Curve curve);
+uECC_word_t EccPoint_isZero(const uECC_word_t *point, uECC_Curve curve);
 
 /*
  * @brief computes the sign of left - right, in constant time.
@@ -326,7 +326,7 @@ __attribute__((section(".ram_code"))) uECC_word_t EccPoint_isZero(const uECC_wor
  * @param num_words IN -- number of words
  * @return the sign of left - right
  */
-__attribute__((section(".ram_code"))) cmpresult_t uECC_vli_cmp(const uECC_word_t *left, const uECC_word_t *right,
+cmpresult_t uECC_vli_cmp(const uECC_word_t *left, const uECC_word_t *right,
 			 wordcount_t num_words);
 
 /*
@@ -337,7 +337,7 @@ __attribute__((section(".ram_code"))) cmpresult_t uECC_vli_cmp(const uECC_word_t
  * @param num_words IN -- number of words
  * @return the sign of left - right
  */
-__attribute__((section(".ram_code"))) cmpresult_t uECC_vli_cmp_unsafe(const uECC_word_t *left, const uECC_word_t *right,
+cmpresult_t uECC_vli_cmp_unsafe(const uECC_word_t *left, const uECC_word_t *right,
 				wordcount_t num_words);
 
 /*
@@ -350,7 +350,7 @@ __attribute__((section(".ram_code"))) cmpresult_t uECC_vli_cmp_unsafe(const uECC
  * @param mod IN -- mod
  * @param num_words IN -- number of words
  */
-__attribute__((section(".ram_code"))) void uECC_vli_modSub(uECC_word_t *result, const uECC_word_t *left,
+void uECC_vli_modSub(uECC_word_t *result, const uECC_word_t *left,
 		     const uECC_word_t *right, const uECC_word_t *mod,
 		     wordcount_t num_words);
 
@@ -364,7 +364,7 @@ __attribute__((section(".ram_code"))) void uECC_vli_modSub(uECC_word_t *result, 
  * @param Y2 IN -- y coordinate of Q
  * @param curve IN -- elliptic curve
  */
-__attribute__((section(".ram_code"))) void XYcZ_add(uECC_word_t * X1, uECC_word_t * Y1, uECC_word_t * X2,
+void XYcZ_add(uECC_word_t * X1, uECC_word_t * Y1, uECC_word_t * X2,
 	      uECC_word_t * Y2, uECC_Curve curve);
 
 /*
@@ -374,7 +374,7 @@ __attribute__((section(".ram_code"))) void XYcZ_add(uECC_word_t * X1, uECC_word_
  * @param Z IN -- z value
  * @param curve IN -- elliptic curve
  */
-__attribute__((section(".ram_code"))) void apply_z(uECC_word_t * X1, uECC_word_t * Y1, const uECC_word_t * const Z,
+void apply_z(uECC_word_t * X1, uECC_word_t * Y1, const uECC_word_t * const Z,
 	     uECC_Curve curve);
 
 /*
@@ -386,7 +386,7 @@ __attribute__((section(".ram_code"))) void apply_z(uECC_word_t * X1, uECC_word_t
  * {63, 62, ..., 32}, {95, 94, ..., 64}, {127, 126,..., 96} for a vli consisting
  * of 4 uECC_word_t elements.
  */
-__attribute__((section(".ram_code"))) uECC_word_t uECC_vli_testBit(const uECC_word_t *vli, bitcount_t bit);
+uECC_word_t uECC_vli_testBit(const uECC_word_t *vli, bitcount_t bit);
 
 /*
  * @brief Computes result = product % mod, where product is 2N words long.
@@ -395,7 +395,7 @@ __attribute__((section(".ram_code"))) uECC_word_t uECC_vli_testBit(const uECC_wo
  * @param num_words IN -- number of words
  * @warning Currently only designed to work for curve_p or curve_n.
  */
-__attribute__((section(".ram_code"))) void uECC_vli_mmod(uECC_word_t *result, uECC_word_t *product,
+void uECC_vli_mmod(uECC_word_t *result, uECC_word_t *product,
 		   const uECC_word_t *mod, wordcount_t num_words);
 
 /*
@@ -405,7 +405,7 @@ __attribute__((section(".ram_code"))) void uECC_vli_mmod(uECC_word_t *result, uE
  * @param right IN -- right term in product
  * @param curve IN -- elliptic curve
  */
-__attribute__((section(".ram_code"))) void uECC_vli_modMult_fast(uECC_word_t *result, const uECC_word_t *left,
+void uECC_vli_modMult_fast(uECC_word_t *result, const uECC_word_t *left,
 			   const uECC_word_t *right, uECC_Curve curve);
 
 /*
@@ -417,7 +417,7 @@ __attribute__((section(".ram_code"))) void uECC_vli_modMult_fast(uECC_word_t *re
  * @param num_words IN -- number of words
  * @return borrow
  */
-__attribute__((section(".ram_code"))) uECC_word_t uECC_vli_sub(uECC_word_t *result, const uECC_word_t *left,
+uECC_word_t uECC_vli_sub(uECC_word_t *result, const uECC_word_t *left,
 			 const uECC_word_t *right, wordcount_t num_words);
 
 /*
@@ -427,7 +427,7 @@ __attribute__((section(".ram_code"))) uECC_word_t uECC_vli_sub(uECC_word_t *resu
  * @param num_words IN -- number of words
  * @return Returns 0 if left == right, 1 otherwise.
  */
-__attribute__((section(".ram_code"))) uECC_word_t uECC_vli_equal(const uECC_word_t *left, const uECC_word_t *right,
+uECC_word_t uECC_vli_equal(const uECC_word_t *left, const uECC_word_t *right,
 			   wordcount_t num_words);
 
 /*
@@ -438,7 +438,7 @@ __attribute__((section(".ram_code"))) uECC_word_t uECC_vli_equal(const uECC_word
  * @param mod IN -- mod
  * @param num_words IN -- number of words
  */
-__attribute__((section(".ram_code"))) void uECC_vli_modMult(uECC_word_t *result, const uECC_word_t *left,
+void uECC_vli_modMult(uECC_word_t *result, const uECC_word_t *left,
 		      const uECC_word_t *right, const uECC_word_t *mod,
 	              wordcount_t num_words);
 
@@ -451,7 +451,7 @@ __attribute__((section(".ram_code"))) void uECC_vli_modMult(uECC_word_t *result,
  * @param mod IN -- mod
  * @param num_words -- number of words
  */
-__attribute__((section(".ram_code"))) void uECC_vli_modInv(uECC_word_t *result, const uECC_word_t *input,
+void uECC_vli_modInv(uECC_word_t *result, const uECC_word_t *input,
 		     const uECC_word_t *mod, wordcount_t num_words);
 
 /*
@@ -460,7 +460,7 @@ __attribute__((section(".ram_code"))) void uECC_vli_modInv(uECC_word_t *result, 
  * @param src IN --  origin buffer
  * @param num_words IN -- number of words
  */
-__attribute__((section(".ram_code"))) void uECC_vli_set(uECC_word_t *dest, const uECC_word_t *src,
+void uECC_vli_set(uECC_word_t *dest, const uECC_word_t *src,
 		  wordcount_t num_words);
 
 /*
@@ -473,7 +473,7 @@ __attribute__((section(".ram_code"))) void uECC_vli_set(uECC_word_t *dest, const
  * @param mod IN -- mod
  * @param num_words IN -- number of words
  */
-__attribute__((section(".ram_code"))) void uECC_vli_modAdd(uECC_word_t *result,  const uECC_word_t *left,
+void uECC_vli_modAdd(uECC_word_t *result,  const uECC_word_t *left,
     		     const uECC_word_t *right, const uECC_word_t *mod,
    		     wordcount_t num_words);
 
@@ -483,7 +483,7 @@ __attribute__((section(".ram_code"))) void uECC_vli_modAdd(uECC_word_t *result, 
  * @param max_words IN -- number of words
  * @return number of bits in given vli
  */
-__attribute__((section(".ram_code"))) bitcount_t uECC_vli_numBits(const uECC_word_t *vli, 
+bitcount_t uECC_vli_numBits(const uECC_word_t *vli, 
 			    const wordcount_t max_words);
 
 /*
@@ -491,7 +491,7 @@ __attribute__((section(".ram_code"))) bitcount_t uECC_vli_numBits(const uECC_wor
  * @param vli IN -- very long integer
  * @param num_words IN -- number of words
  */
-__attribute__((section(".ram_code"))) void uECC_vli_clear(uECC_word_t *vli, wordcount_t num_words);
+void uECC_vli_clear(uECC_word_t *vli, wordcount_t num_words);
 
 /*
  * @brief check if it is a valid point in the curve
@@ -502,7 +502,7 @@ __attribute__((section(".ram_code"))) void uECC_vli_clear(uECC_word_t *vli, word
  * @exception returns -2 if x or y is smaller than p,
  * @exception returns -3 if y^2 != x^3 + ax + b.
  */
-__attribute__((section(".ram_code"))) int uECC_valid_point(const uECC_word_t *point, uECC_Curve curve);
+int uECC_valid_point(const uECC_word_t *point, uECC_Curve curve);
 
 /*
  * @brief Check if a public key is valid.
@@ -518,7 +518,7 @@ __attribute__((section(".ram_code"))) int uECC_valid_point(const uECC_word_t *po
  * time computing a shared secret or verifying a signature using an invalid
  * public key.
  */
-__attribute__((section(".ram_code"))) int uECC_valid_public_key(const uint8_t *public_key, uECC_Curve curve);
+int uECC_valid_public_key(const uint8_t *public_key, uECC_Curve curve);
 
  /*
   * @brief Converts an integer in uECC native format to big-endian bytes.
@@ -526,7 +526,7 @@ __attribute__((section(".ram_code"))) int uECC_valid_public_key(const uint8_t *p
   * @param num_bytes IN -- number of bytes
   * @param native IN -- uECC native representation
   */
-__attribute__((section(".ram_code"))) void uECC_vli_nativeToBytes(uint8_t *bytes, int num_bytes,
+void uECC_vli_nativeToBytes(uint8_t *bytes, int num_bytes,
     			    const unsigned int *native);
 
 /*
@@ -535,7 +535,7 @@ __attribute__((section(".ram_code"))) void uECC_vli_nativeToBytes(uint8_t *bytes
  * @param bytes IN -- bytes representation
  * @param num_bytes IN -- number of bytes
  */
-__attribute__((section(".ram_code"))) void uECC_vli_bytesToNative(unsigned int *native, const uint8_t *bytes,
+void uECC_vli_bytesToNative(unsigned int *native, const uint8_t *bytes,
 			    int num_bytes);
 
 #ifdef __cplusplus

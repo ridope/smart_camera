@@ -107,7 +107,7 @@ extern "C" {
  *  @param iv IN -- the IV for the this encrypt/decrypt
  *  @param sched IN --  AES key schedule for this encrypt
  */
-__attribute__((section(".ram_code"))) int tc_cbc_mode_encrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
+int tc_cbc_mode_encrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
 			unsigned int inlen, const uint8_t *iv,
 			const TCAesKeySched_t sched);
 
@@ -140,7 +140,7 @@ __attribute__((section(".ram_code"))) int tc_cbc_mode_encrypt(uint8_t *out, unsi
  * @param sched IN --  AES key schedule for this decrypt
  *
  */
-__attribute__((section(".ram_code"))) int tc_cbc_mode_decrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
+int tc_cbc_mode_decrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
 			unsigned int inlen, const uint8_t *iv,
 			const TCAesKeySched_t sched);
 

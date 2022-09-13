@@ -34,7 +34,7 @@
 #include <tinycrypt/ctr_mode.h>
 #include <tinycrypt/utils.h>
 
-__attribute__((section(".ram_code"))) int tc_ctr_mode(uint8_t *out, unsigned int outlen, const uint8_t *in,
+int tc_ctr_mode(uint8_t *out, unsigned int outlen, const uint8_t *in,
 		unsigned int inlen, uint8_t *ctr, const TCAesKeySched_t sched)
 {
 

@@ -14,9 +14,6 @@
 #include <libbase/console.h>
 #include <generated/csr.h>
 
-#include <mbedtls/gcm.h>
-#include <mbedtls/cipher.h>
-
 shared_data_t ctrl_data __attribute__ ((section ("shared_ram"))) ;
 private_firev_data_t priv_data __attribute__ ((section ("priv_sp"))) ;
 
@@ -130,7 +127,7 @@ static void console_service(void)
             printf("Class received: %d\n", ctrl_data.predicted_class);
 
             int result = 0;
-            result = amp_aes_update_nonce(&priv_data);
+            result = amp_aes_update_nonce(&ctrl_data, &priv_data);
             result = amp_aes_encrypts(&ctrl_data, &priv_data);
 
             if (result != 0)
@@ -156,12 +153,25 @@ int main(void)
     amp_aes_init(&priv_data);
 
     /* Initing nonce */
-    amp_aes_update_nonce(&priv_data);
+    amp_aes_update_nonce(&ctrl_data, &priv_data);
 
     prompt();
 
     while(1) {
         console_service();
+
+        if(ctrl_data.flag == 1){
+            printf("Class received: %d\n", ctrl_data.predicted_class);
+
+            int result = 0;
+            result = amp_aes_update_nonce(&ctrl_data, &priv_data);
+            result = amp_aes_encrypts(&ctrl_data, &priv_data);
+
+            if (result != 0)
+            {
+                printf("\e[91;1mError in the encryption. Err= %d\e[0m\n", result);
+            }
+        }
     }
 
     return 0;

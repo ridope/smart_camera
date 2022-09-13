@@ -102,7 +102,7 @@ extern "C" {
  * @note side-channel countermeasure: algorithm strengthened against timing
  * attack.
  */
-__attribute__((section(".ram_code"))) int uECC_sign(const uint8_t *p_private_key, const uint8_t *p_message_hash,
+int uECC_sign(const uint8_t *p_private_key, const uint8_t *p_message_hash,
 	      unsigned p_hash_size, uint8_t *p_signature, uECC_Curve curve);
 
 #ifdef ENABLE_TESTS
@@ -129,7 +129,7 @@ int uECC_sign_with_k(const uint8_t *private_key, const uint8_t *message_hash,
  * signer and pass it to this function along with the signer's public key and
  * the signature values (hash_size and signature).
  */
-__attribute__((section(".ram_code"))) int uECC_verify(const uint8_t *p_public_key, const uint8_t *p_message_hash,
+int uECC_verify(const uint8_t *p_public_key, const uint8_t *p_message_hash,
 		unsigned int p_hash_size, const uint8_t *p_signature, uECC_Curve curve);
 
 #ifdef __cplusplus

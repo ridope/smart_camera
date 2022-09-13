@@ -139,7 +139,7 @@ typedef struct tc_cmac_struct {
  * @param key IN -- the key to use
  * @param sched IN -- AES key schedule
  */
-__attribute__((section(".ram_code"))) int tc_cmac_setup(TCCmacState_t s, const uint8_t *key,
+int tc_cmac_setup(TCCmacState_t s, const uint8_t *key,
 		      TCAesKeySched_t sched);
 
 /**
@@ -150,7 +150,7 @@ __attribute__((section(".ram_code"))) int tc_cmac_setup(TCCmacState_t s, const u
  *
  * @param s IN/OUT -- the state to erase
  */
-__attribute__((section(".ram_code"))) int tc_cmac_erase(TCCmacState_t s);
+int tc_cmac_erase(TCCmacState_t s);
 
 /**
  * @brief Initializes a new CMAC computation
@@ -160,7 +160,7 @@ __attribute__((section(".ram_code"))) int tc_cmac_erase(TCCmacState_t s);
  *
  * @param s IN/OUT -- the state to initialize
  */
-__attribute__((section(".ram_code"))) int tc_cmac_init(TCCmacState_t s);
+int tc_cmac_init(TCCmacState_t s);
 
 /**
  * @brief Incrementally computes CMAC over the next data segment
@@ -173,7 +173,7 @@ __attribute__((section(".ram_code"))) int tc_cmac_init(TCCmacState_t s);
  * @param data IN -- the next data segment to MAC
  * @param dlen IN -- the length of data in bytes
  */
-__attribute__((section(".ram_code"))) int tc_cmac_update(TCCmacState_t s, const uint8_t *data, size_t dlen);
+int tc_cmac_update(TCCmacState_t s, const uint8_t *data, size_t dlen);
 
 /**
  * @brief Generates the tag from the CMAC state
@@ -185,7 +185,7 @@ __attribute__((section(".ram_code"))) int tc_cmac_update(TCCmacState_t s, const 
  * @param tag OUT -- the CMAC tag
  * @param s IN -- CMAC state
  */
-__attribute__((section(".ram_code"))) int tc_cmac_final(uint8_t *tag, TCCmacState_t s);
+int tc_cmac_final(uint8_t *tag, TCCmacState_t s);
 
 #ifdef __cplusplus
 }

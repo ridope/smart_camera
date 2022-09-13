@@ -73,26 +73,11 @@ SECTIONS
 		_ebss = .;
 		_end = .;
 	} > sram
-
-	.heap (NOLOAD) :
-    {
-        . = ALIGN(8);
-		_fheap = .;
-        . = . + HEAP_SIZE;
-        . = ALIGN(8);
-		_eheap = .;
-    } > sram
-
-	.stack (NOLOAD) :
-    {
-        . = ALIGN(8);
-        . = . + STACK_SIZE;
-        . = ALIGN(8);
-		PROVIDE(_fstack = .);
-    } > sram
 }
 
-PROVIDE(__heap_start = _fheap );
-PROVIDE(__heap_end = _eheap);
+PROVIDE(__heap_start = _end );
+PROVIDE(__heap_end = ORIGIN(sram) + LENGTH(sram));
+PROVIDE(_fstack = ORIGIN(sram) + LENGTH(sram));
+
 PROVIDE(_fdata_rom = LOADADDR(.data));
 PROVIDE(_edata_rom = LOADADDR(.data) + SIZEOF(.data));

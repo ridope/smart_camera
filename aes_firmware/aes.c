@@ -8,6 +8,9 @@
 
 TCCtrPrng_t ctx;
 
+struct tc_aes_key_sched_struct s;
+struct tc_ccm_mode_struct c;
+
 
 /**
  * @brief Get the hex representation of the input string
@@ -17,7 +20,7 @@ TCCtrPrng_t ctx;
  * @param hex_out 	Output hex representation
  * @return uint8_t 	The bytes written in the output
  */
-__attribute__((section(".ram_code"))) uint8_t get_hex_rep(char *str_input, uint8_t in_size, uint8_t *hex_out)
+uint8_t get_hex_rep(char *str_input, uint8_t in_size, uint8_t *hex_out)
 {
 	if(str_input == NULL || hex_out == NULL)
 	{
@@ -54,7 +57,7 @@ __attribute__((section(".ram_code"))) uint8_t get_hex_rep(char *str_input, uint8
  * @param data_ctrl 	The pointer for the struct holding the information to perform the encryption
  * @return int 			Returns 0 if success, < 0 if an error ocurred
  */
-__attribute__((section(".ram_code"))) int amp_aes_init(private_firev_data_t *priv_data)
+int amp_aes_init(private_firev_data_t *priv_data)
 {
 	if(priv_data==NULL)
 	{
@@ -92,20 +95,24 @@ __attribute__((section(".ram_code"))) int amp_aes_init(private_firev_data_t *pri
  * @param data_ctrl 	The pointer for the struct holding the information to perform the encryption
  * @return int 			Returns 0 if success, < 0 if an error ocurred
  */
-__attribute__((section(".ram_code"))) int amp_aes_update_nonce(private_firev_data_t *priv_data)
+int amp_aes_update_nonce(shared_data_t *data_ctrl, private_firev_data_t *priv_data)
 {
-	if(priv_data==NULL)
+	if(priv_data==NULL || data_ctrl==NULL)
 	{
 		return -1 ;
 
 	}
 
-	int result = 1;
+	if (data_ctrl->flag==1){
 
-	result = tc_ctr_prng_generate(&ctx, NULL, 0, &priv_data->nonce[0], NONCE_SIZE);
+		int result = 1;
 
-	if (result != 1) {
-		return -2;
+		result = tc_ctr_prng_generate(&ctx, NULL, 0, &priv_data->nonce[0], NONCE_SIZE);
+
+		if (result != 1) {
+			return -2;
+		}
+
 	}
 
 	return 0;
@@ -117,7 +124,7 @@ __attribute__((section(".ram_code"))) int amp_aes_update_nonce(private_firev_dat
  * @param data_ctrl 		The pointer for the struct holding the information to perform the encryption
  * @return int 				Returns 0 if success, < 0 if an error ocurred
  */
-__attribute__((section(".ram_code"))) int amp_aes_encrypts(shared_data_t *data_ctrl, private_firev_data_t *priv_d)
+int amp_aes_encrypts(shared_data_t *data_ctrl, private_firev_data_t *priv_d)
 {
 	if(data_ctrl==NULL || priv_d == NULL)
 	{
@@ -128,30 +135,35 @@ __attribute__((section(".ram_code"))) int amp_aes_encrypts(shared_data_t *data_c
 	{
 		/* Setting encryption configs */
 		uint8_t text_len = CLASS_SIZE;
-		uint8_t cipher_size = text_len;
+		uint8_t cipher_size = text_len + MAC_LEN;
 
-		mbedtls_gcm_context ctx;
+		int result = TC_CRYPTO_SUCCESS;
 
-		mbedtls_gcm_init(&ctx);
+		result = tc_aes128_set_encrypt_key(&s, &priv_d->key[0]);
 
-		int result = mbedtls_gcm_setkey(&ctx, MBEDTLS_CIPHER_ID_AES, &priv_d->key[0], KEY_SIZE_BITS);
-		if (result == MBEDTLS_ERR_GCM_BAD_INPUT){
+		if (result != TC_CRYPTO_SUCCESS)
+		{
 			return -2;
 		}
 
+		result = tc_ccm_config(&c, &s, &priv_d->nonce[0], NONCE_SIZE, MAC_LEN);
+		if (result != TC_CRYPTO_SUCCESS)
+		{
+			return -3;
+		}
 		
 		/* Encryption phase */
-		result = mbedtls_gcm_crypt_and_tag(&ctx, MBEDTLS_GCM_ENCRYPT, cipher_size, &priv_d->nonce[0], NONCE_SIZE, NULL, 0, &data_ctrl->predicted_class, &data_ctrl->ciphertext[0], MAC_LEN,  &data_ctrl->tag[0]);
-		if (result == MBEDTLS_ERR_GCM_BAD_INPUT) {
-			return -3;
+		result = tc_ccm_generation_encryption(&data_ctrl->ciphertext[0], cipher_size, NULL, 0, &data_ctrl->predicted_class, text_len, &c);
+		if (result != TC_CRYPTO_SUCCESS) {
+			printf("\e[91;1mError in the encryption. Result= %d\e[0m\n", result);
+			return -4;
 		}
 
 		/* Releasing the flag */
 		data_ctrl->flag = 0;
-		mbedtls_gcm_free(&ctx);
 		return 0;
 
 	}else{
-		return -4;
+		return -5;
 	}
 }

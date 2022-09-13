@@ -76,7 +76,7 @@ typedef struct tc_aes_key_sched_struct {
  *  @param      s IN/OUT -- initialized struct tc_aes_key_sched_struct
  *  @param      k IN -- points to the AES key
  */
-__attribute__((section(".ram_code"))) int tc_aes128_set_encrypt_key(TCAesKeySched_t s, const uint8_t *k);
+int tc_aes128_set_encrypt_key(TCAesKeySched_t s, const uint8_t *k);
 
 /**
  *  @brief AES-128 Encryption procedure
@@ -90,7 +90,7 @@ __attribute__((section(".ram_code"))) int tc_aes128_set_encrypt_key(TCAesKeySche
  *  @param in IN -- a plaintext block to encrypt
  *  @param s IN -- initialized AES key schedule
  */
-__attribute__((section(".ram_code"))) int tc_aes_encrypt(uint8_t *out, const uint8_t *in, 
+int tc_aes_encrypt(uint8_t *out, const uint8_t *in, 
 		   const TCAesKeySched_t s);
 
 /**
@@ -107,7 +107,7 @@ __attribute__((section(".ram_code"))) int tc_aes_encrypt(uint8_t *out, const uin
  *  @param s  IN/OUT -- initialized struct tc_aes_key_sched_struct
  *  @param k  IN -- points to the AES key
  */
-__attribute__((section(".ram_code"))) int tc_aes128_set_decrypt_key(TCAesKeySched_t s, const uint8_t *k);
+int tc_aes128_set_decrypt_key(TCAesKeySched_t s, const uint8_t *k);
 
 /**
  *  @brief AES-128 Encryption procedure
@@ -120,7 +120,7 @@ __attribute__((section(".ram_code"))) int tc_aes128_set_decrypt_key(TCAesKeySche
  *  @param in IN -- a plaintext block to encrypt
  *  @param s IN -- initialized AES key schedule
  */
-__attribute__((section(".ram_code"))) int tc_aes_decrypt(uint8_t *out, const uint8_t *in, 
+int tc_aes_decrypt(uint8_t *out, const uint8_t *in, 
 		   const TCAesKeySched_t s);
 
 #ifdef __cplusplus

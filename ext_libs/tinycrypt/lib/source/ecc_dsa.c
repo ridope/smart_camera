@@ -58,7 +58,7 @@
 #include <tinycrypt/ecc_dsa.h>
 
 
-__attribute__((section(".ram_code"))) static void bits2int(uECC_word_t *native, const uint8_t *bits,
+static void bits2int(uECC_word_t *native, const uint8_t *bits,
 		     unsigned bits_size, uECC_Curve curve)
 {
 	unsigned num_n_bytes = BITS_TO_BYTES(curve->num_n_bits);
@@ -91,7 +91,7 @@ __attribute__((section(".ram_code"))) static void bits2int(uECC_word_t *native, 
 	}
 }
 
-__attribute__((section(".ram_code"))) int uECC_sign_with_k(const uint8_t *private_key, const uint8_t *message_hash,
+int uECC_sign_with_k(const uint8_t *private_key, const uint8_t *message_hash,
 		     unsigned hash_size, uECC_word_t *k, uint8_t *signature,
 		     uECC_Curve curve)
 {
@@ -153,7 +153,7 @@ __attribute__((section(".ram_code"))) int uECC_sign_with_k(const uint8_t *privat
 	return 1;
 }
 
-__attribute__((section(".ram_code"))) int uECC_sign(const uint8_t *private_key, const uint8_t *message_hash,
+int uECC_sign(const uint8_t *private_key, const uint8_t *message_hash,
 	      unsigned hash_size, uint8_t *signature, uECC_Curve curve)
 {
 	      uECC_word_t _random[2*NUM_ECC_WORDS];
@@ -179,12 +179,12 @@ __attribute__((section(".ram_code"))) int uECC_sign(const uint8_t *private_key, 
 	return 0;
 }
 
-__attribute__((section(".ram_code"))) static bitcount_t smax(bitcount_t a, bitcount_t b)
+static bitcount_t smax(bitcount_t a, bitcount_t b)
 {
 	return (a > b ? a : b);
 }
 
-__attribute__((section(".ram_code"))) int uECC_verify(const uint8_t *public_key, const uint8_t *message_hash,
+int uECC_verify(const uint8_t *public_key, const uint8_t *message_hash,
 		unsigned hash_size, const uint8_t *signature,
 	        uECC_Curve curve)
 {
