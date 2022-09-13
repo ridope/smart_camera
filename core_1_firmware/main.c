@@ -14,9 +14,6 @@
 #include <libbase/console.h>
 #include <generated/csr.h>
 
-#include <mbedtls/gcm.h>
-#include <mbedtls/cipher.h>
-
 shared_data_t ctrl_data __attribute__ ((section ("shared_ram"))) ;
 private_firev_data_t priv_data __attribute__ ((section ("priv_sp"))) ;
 

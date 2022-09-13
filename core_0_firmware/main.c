@@ -165,8 +165,7 @@ static void console_service(void)
     else if(strcmp(token, "enc") == 0){
 
         const int MEASURE_STEPS = 100;
-        double pred_time = 0;
-        double aes_time = 0;
+        double throughput_ms = 0;
         uint32_t time_begin, time_end;
         float time_spent_ms;
         int class;
@@ -174,35 +173,26 @@ static void console_service(void)
         for (int i = 0; i < MEASURE_STEPS; i++)
         {
             printf("Measuring step: %d/%d\r",i+1, MEASURE_STEPS);
+            
             time_begin = amp_millis();
+
             class = predict(f_img);
-            time_end = amp_millis();
-
-            time_spent_ms = (time_begin - time_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
-            pred_time += time_spent_ms;
-
-            time_begin = amp_millis();
             amp_send_class(class);
+            
             time_end = amp_millis();
-            time_spent_ms = (time_begin - time_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
-            aes_time += time_spent_ms;
 
+            time_spent_ms = (time_begin - time_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+            throughput_ms += time_spent_ms;
         }
 
          printf("\n");
 
-        time_spent_ms = pred_time/MEASURE_STEPS;
+        time_spent_ms = throughput_ms/MEASURE_STEPS;
 
         /* Allowing printf to display float will increase code size, so the parts of the float number are being extracted belw */
         int f_left = (int)time_spent_ms;
         int f_right = ((float)(time_spent_ms - f_left)*1000.0);
-        printf("Predicted class: %d in %d.%d ms\n", class, f_left, f_right);
-
-        
-        time_spent_ms = aes_time/MEASURE_STEPS;
-        f_left = (int)time_spent_ms;
-        f_right = ((float)(time_spent_ms - f_left)*1000.0);
-        printf("Encrypted class: %d in %d.%d ms\n", class, f_left, f_right);
+        printf("Throughput for predicted class: %d is %d.%d ms\n", class, f_left, f_right);
     }
 
 
