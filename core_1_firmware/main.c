@@ -130,7 +130,7 @@ static void console_service(void)
             printf("Class received: %d\n", ctrl_data.predicted_class);
 
             int result = 0;
-            result = amp_aes_update_nonce(&priv_data);
+            result = amp_aes_update_nonce(&ctrl_data, &priv_data);
             result = amp_aes_encrypts(&ctrl_data, &priv_data);
 
             if (result != 0)
@@ -156,12 +156,25 @@ int main(void)
     amp_aes_init(&priv_data);
 
     /* Initing nonce */
-    amp_aes_update_nonce(&priv_data);
+    amp_aes_update_nonce(&ctrl_data, &priv_data);
 
     prompt();
 
     while(1) {
         console_service();
+
+        if(ctrl_data.flag == 1){
+            printf("Class received: %d\n", ctrl_data.predicted_class);
+
+            int result = 0;
+            result = amp_aes_update_nonce(&ctrl_data, &priv_data);
+            result = amp_aes_encrypts(&ctrl_data, &priv_data);
+
+            if (result != 0)
+            {
+                printf("\e[91;1mError in the encryption. Err= %d\e[0m\n", result);
+            }
+        }
     }
 
     return 0;

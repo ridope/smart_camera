@@ -108,7 +108,7 @@ typedef struct tc_ccm_mode_struct {
  * @param nlen -- nonce length in bytes
  * @param mlen -- mac length in bytes (parameter t in SP-800 38C)
  */
-__attribute__((section(".ram_code"))) int tc_ccm_config(TCCcmMode_t c, TCAesKeySched_t sched, uint8_t *nonce,
+int tc_ccm_config(TCCcmMode_t c, TCAesKeySched_t sched, uint8_t *nonce,
 		  unsigned int nlen, unsigned int mlen);
 
 /**
@@ -153,7 +153,7 @@ __attribute__((section(".ram_code"))) int tc_ccm_config(TCCcmMode_t c, TCAesKeyS
  *          6: Adata (0 if alen == 0, and 1 otherwise)
  *          7: always 0
  */
-__attribute__((section(".ram_code"))) int tc_ccm_generation_encryption(uint8_t *out, unsigned int olen,
+int tc_ccm_generation_encryption(uint8_t *out, unsigned int olen,
 			   	 const uint8_t *associated_data,
 			   	 unsigned int alen, const uint8_t *payload,
 				 unsigned int plen, TCCcmMode_t c);
@@ -199,7 +199,7 @@ __attribute__((section(".ram_code"))) int tc_ccm_generation_encryption(uint8_t *
  *          6: Adata (0 if alen == 0, and 1 otherwise)
  *          7: always 0
  */
-__attribute__((section(".ram_code"))) int tc_ccm_decryption_verification(uint8_t *out, unsigned int olen,
+int tc_ccm_decryption_verification(uint8_t *out, unsigned int olen,
 				   const uint8_t *associated_data,
 				   unsigned int alen, const uint8_t *payload, unsigned int plen,
 				   TCCcmMode_t c);

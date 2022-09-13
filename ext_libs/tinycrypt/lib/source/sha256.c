@@ -34,9 +34,9 @@
 #include <tinycrypt/constants.h>
 #include <tinycrypt/utils.h>
 
-__attribute__((section(".ram_code"))) static void compress(unsigned int *iv, const uint8_t *data);
+static void compress(unsigned int *iv, const uint8_t *data);
 
-__attribute__((section(".ram_code"))) int tc_sha256_init(TCSha256State_t s)
+int tc_sha256_init(TCSha256State_t s)
 {
 	/* input sanity check: */
 	if (s == (TCSha256State_t) 0) {
@@ -62,7 +62,7 @@ __attribute__((section(".ram_code"))) int tc_sha256_init(TCSha256State_t s)
 	return TC_CRYPTO_SUCCESS;
 }
 
-__attribute__((section(".ram_code"))) int tc_sha256_update(TCSha256State_t s, const uint8_t *data, size_t datalen)
+int tc_sha256_update(TCSha256State_t s, const uint8_t *data, size_t datalen)
 {
 	/* input sanity check: */
 	if (s == (TCSha256State_t) 0 ||
@@ -84,7 +84,7 @@ __attribute__((section(".ram_code"))) int tc_sha256_update(TCSha256State_t s, co
 	return TC_CRYPTO_SUCCESS;
 }
 
-__attribute__((section(".ram_code"))) int tc_sha256_final(uint8_t *digest, TCSha256State_t s)
+int tc_sha256_final(uint8_t *digest, TCSha256State_t s)
 {
 	unsigned int i;
 
@@ -140,7 +140,7 @@ __attribute__((section(".ram_code"))) int tc_sha256_final(uint8_t *digest, TCSha
  * These values correspond to the first 32 bits of the fractional parts of the
  * cube roots of the first 64 primes between 2 and 311.
  */
-__attribute__((section(".ram_code"))) static const unsigned int k256[64] = {
+static const unsigned int k256[64] = {
 	0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
 	0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
 	0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
@@ -154,7 +154,7 @@ __attribute__((section(".ram_code"))) static const unsigned int k256[64] = {
 	0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
 
-__attribute__((section(".ram_code"))) static inline unsigned int ROTR(unsigned int a, unsigned int n)
+static inline unsigned int ROTR(unsigned int a, unsigned int n)
 {
 	return (((a) >> n) | ((a) << (32 - n)));
 }
@@ -167,7 +167,7 @@ __attribute__((section(".ram_code"))) static inline unsigned int ROTR(unsigned i
 #define Ch(a, b, c)(((a) & (b)) ^ ((~(a)) & (c)))
 #define Maj(a, b, c)(((a) & (b)) ^ ((a) & (c)) ^ ((b) & (c)))
 
-__attribute__((section(".ram_code"))) static inline unsigned int BigEndian(const uint8_t **c)
+static inline unsigned int BigEndian(const uint8_t **c)
 {
 	unsigned int n = 0;
 
@@ -178,7 +178,7 @@ __attribute__((section(".ram_code"))) static inline unsigned int BigEndian(const
 	return n;
 }
 
-__attribute__((section(".ram_code"))) static void compress(unsigned int *iv, const uint8_t *data)
+static void compress(unsigned int *iv, const uint8_t *data)
 {
 	unsigned int a, b, c, d, e, f, g, h;
 	unsigned int s0, s1;

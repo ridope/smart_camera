@@ -88,7 +88,7 @@ mbedtls_gcm_context;
  *
  * \param ctx       The GCM context to initialize. This must not be \c NULL.
  */
-__attribute__((section(".ram_code"))) void mbedtls_gcm_init( mbedtls_gcm_context *ctx );
+void mbedtls_gcm_init( mbedtls_gcm_context *ctx );
 
 /**
  * \brief           This function associates a GCM context with a
@@ -106,7 +106,7 @@ __attribute__((section(".ram_code"))) void mbedtls_gcm_init( mbedtls_gcm_context
  * \return          \c 0 on success.
  * \return          A cipher-specific error code on failure.
  */
-__attribute__((section(".ram_code"))) int mbedtls_gcm_setkey( mbedtls_gcm_context *ctx,
+int mbedtls_gcm_setkey( mbedtls_gcm_context *ctx,
                         mbedtls_cipher_id_t cipher,
                         const unsigned char *key,
                         unsigned int keybits );
@@ -162,7 +162,7 @@ __attribute__((section(".ram_code"))) int mbedtls_gcm_setkey( mbedtls_gcm_contex
  *                  not valid or a cipher-specific error code if the encryption
  *                  or decryption failed.
  */
-__attribute__((section(".ram_code"))) int mbedtls_gcm_crypt_and_tag( mbedtls_gcm_context *ctx,
+int mbedtls_gcm_crypt_and_tag( mbedtls_gcm_context *ctx,
                        int mode,
                        size_t length,
                        const unsigned char *iv,
@@ -207,7 +207,7 @@ __attribute__((section(".ram_code"))) int mbedtls_gcm_crypt_and_tag( mbedtls_gcm
  *                  not valid or a cipher-specific error code if the decryption
  *                  failed.
  */
-__attribute__((section(".ram_code"))) int mbedtls_gcm_auth_decrypt( mbedtls_gcm_context *ctx,
+int mbedtls_gcm_auth_decrypt( mbedtls_gcm_context *ctx,
                       size_t length,
                       const unsigned char *iv,
                       size_t iv_len,
@@ -231,7 +231,7 @@ __attribute__((section(".ram_code"))) int mbedtls_gcm_auth_decrypt( mbedtls_gcm_
  *
  * \return          \c 0 on success.
  */
-__attribute__((section(".ram_code"))) int mbedtls_gcm_starts( mbedtls_gcm_context *ctx,
+int mbedtls_gcm_starts( mbedtls_gcm_context *ctx,
                         int mode,
                         const unsigned char *iv,
                         size_t iv_len );
@@ -256,7 +256,7 @@ __attribute__((section(".ram_code"))) int mbedtls_gcm_starts( mbedtls_gcm_contex
  *
  * \return          \c 0 on success.
  */
-__attribute__((section(".ram_code"))) int mbedtls_gcm_update_ad( mbedtls_gcm_context *ctx,
+int mbedtls_gcm_update_ad( mbedtls_gcm_context *ctx,
                            const unsigned char *add,
                            int add_len );
 
@@ -311,7 +311,7 @@ __attribute__((section(".ram_code"))) int mbedtls_gcm_update_ad( mbedtls_gcm_con
  *                 unsupported input/output buffer overlap detected,
  *                 or \p output_size too small.
  */
-__attribute__((section(".ram_code"))) int mbedtls_gcm_update( mbedtls_gcm_context *ctx,
+int mbedtls_gcm_update( mbedtls_gcm_context *ctx,
                         const unsigned char *input, size_t input_length,
                         unsigned char *output, size_t output_size,
                         size_t *output_length );

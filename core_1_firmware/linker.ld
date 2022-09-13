@@ -3,9 +3,7 @@ ENTRY(_start)
 
 __DYNAMIC = 0;
 
-INCLUDE /generated/regions.ld
-
-STACK_SIZE = 0x1080; /* 4 kB */
+INCLUDE generated/regions.ld
 
 SECTIONS
 {
@@ -17,17 +15,10 @@ SECTIONS
 		*crt0*(.text)
 		KEEP(*crt0*(.text))
 		KEEP(*(.text.isr))
+
 		*(.text .stub .text.* .gnu.linkonce.t.*)
 		_etext = .;
 	} > sram
-
-	.my_ram :
-	{
-		. = ALIGN(8);
-		KEEP(*(.ram_code));
-		_fheap = .;
-		. = ALIGN(8);
-	} > main_ram
 
 	.rodata :
 	{
@@ -49,22 +40,7 @@ SECTIONS
 		*(.sdata .sdata.* .gnu.linkonce.s.*)
 		. = ALIGN(8);
 		_edata = .;
-	} > sram
-
-	.bss :
-	{
-		. = ALIGN(8);
-		_fbss = .;
-		*(.dynsbss)
-		*(.sbss .sbss.* .gnu.linkonce.sb.*)
-		*(.scommon)
-		*(.dynbss)
-		*(.bss .bss.* .gnu.linkonce.b.*)
-		*(COMMON)
-		. = ALIGN(8);
-		_ebss = .;
-		_end = .;
-	} > sram 
+	} > main_ram AT > sram
 
 	.shared_ram :
 	{
@@ -80,17 +56,25 @@ SECTIONS
 		. = ALIGN(8);
 	} > mmap_m_1 AT > sram
 
-	.stack (NOLOAD) :
-    {
-        . = ALIGN(8);
-        . = . + STACK_SIZE;
-        . = ALIGN(8);
-		PROVIDE(_fstack = .);
-    } > sram
-	
+	.bss :
+	{
+		. = ALIGN(8);
+		_fbss = .;
+		*(.dynsbss)
+		*(.sbss .sbss.* .gnu.linkonce.sb.*)
+		*(.scommon)
+		*(.dynbss)
+		*(.bss .bss.* .gnu.linkonce.b.*)
+		*(COMMON)
+		. = ALIGN(8);
+		_ebss = .;
+		_end = .;
+	} > sram
 }
 
-PROVIDE(__heap_start = _fheap );
-PROVIDE(__heap_end = ORIGIN(main_ram) + LENGTH(main_ram));
+PROVIDE(__heap_start = _end );
+PROVIDE(__heap_end = ORIGIN(sram) + LENGTH(sram));
+PROVIDE(_fstack = ORIGIN(sram) + LENGTH(sram));
+
 PROVIDE(_fdata_rom = LOADADDR(.data));
 PROVIDE(_edata_rom = LOADADDR(.data) + SIZEOF(.data));

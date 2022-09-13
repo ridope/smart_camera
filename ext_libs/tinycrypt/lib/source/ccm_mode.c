@@ -36,7 +36,7 @@
 
 #include <stdio.h>
 
-__attribute__((section(".ram_code"))) int tc_ccm_config(TCCcmMode_t c, TCAesKeySched_t sched, uint8_t *nonce,
+int tc_ccm_config(TCCcmMode_t c, TCAesKeySched_t sched, uint8_t *nonce,
 		  unsigned int nlen, unsigned int mlen)
 {
 
@@ -61,7 +61,7 @@ __attribute__((section(".ram_code"))) int tc_ccm_config(TCCcmMode_t c, TCAesKeyS
 /**
  * Variation of CBC-MAC mode used in CCM.
  */
-__attribute__((section(".ram_code"))) static void ccm_cbc_mac(uint8_t *T, const uint8_t *data, unsigned int dlen,
+static void ccm_cbc_mac(uint8_t *T, const uint8_t *data, unsigned int dlen,
 			unsigned int flag, TCAesKeySched_t sched)
 {
 
@@ -90,7 +90,7 @@ __attribute__((section(".ram_code"))) static void ccm_cbc_mac(uint8_t *T, const 
  * encryption). Besides, it is assumed that the counter is stored in the last
  * 2 bytes of the nonce.
  */
-__attribute__((section(".ram_code"))) static int ccm_ctr_mode(uint8_t *out, unsigned int outlen, const uint8_t *in,
+static int ccm_ctr_mode(uint8_t *out, unsigned int outlen, const uint8_t *in,
 			unsigned int inlen, uint8_t *ctr, const TCAesKeySched_t sched)
 {
 
@@ -134,7 +134,7 @@ __attribute__((section(".ram_code"))) static int ccm_ctr_mode(uint8_t *out, unsi
 	return TC_CRYPTO_SUCCESS;
 }
 
-__attribute__((section(".ram_code"))) int tc_ccm_generation_encryption(uint8_t *out, unsigned int olen,
+int tc_ccm_generation_encryption(uint8_t *out, unsigned int olen,
 				 const uint8_t *associated_data,
 				 unsigned int alen, const uint8_t *payload,
 				 unsigned int plen, TCCcmMode_t c)
@@ -195,7 +195,7 @@ __attribute__((section(".ram_code"))) int tc_ccm_generation_encryption(uint8_t *
 	return TC_CRYPTO_SUCCESS;
 }
 
-__attribute__((section(".ram_code"))) int tc_ccm_decryption_verification(uint8_t *out, unsigned int olen,
+int tc_ccm_decryption_verification(uint8_t *out, unsigned int olen,
 				   const uint8_t *associated_data,
 				   unsigned int alen, const uint8_t *payload,
 				   unsigned int plen, TCCcmMode_t c)

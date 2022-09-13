@@ -19,19 +19,18 @@
 
 #define CLASS_SIZE        1
 
-typedef struct SHARED_DATA {
+typedef volatile struct SHARED_DATA {
     uint8_t predicted_class;
     int flag;
 
-    uint8_t tag[MAC_LEN];
-    uint8_t ciphertext[CLASS_SIZE];
+    uint8_t ciphertext[CLASS_SIZE+MAC_LEN];
 } shared_data_t;
 
 typedef struct PRIVATE_FIREV_DATA {
     uint8_t nonce[NONCE_SIZE];
     uint8_t key[KEY_SIZE_BYTES];
-    uint8_t tag[MAC_LEN];
-    uint8_t ciphertext[CLASS_SIZE];
+
+    uint8_t ciphertext[CLASS_SIZE+MAC_LEN];
 } private_firev_data_t;
 
 #endif

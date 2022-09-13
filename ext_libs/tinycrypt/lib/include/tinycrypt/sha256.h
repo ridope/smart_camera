@@ -84,7 +84,7 @@ typedef struct tc_sha256_state_struct *TCSha256State_t;
  *          returns TC_CRYPTO_FAIL (0) if s == NULL
  *  @param s Sha256 state struct
  */
-__attribute__((section(".ram_code"))) int tc_sha256_init(TCSha256State_t s);
+int tc_sha256_init(TCSha256State_t s);
 
 /**
  *  @brief SHA256 update procedure
@@ -102,7 +102,7 @@ __attribute__((section(".ram_code"))) int tc_sha256_init(TCSha256State_t s);
  *  @param data message to hash
  *  @param datalen length of message to hash
  */
-__attribute__((section(".ram_code"))) int tc_sha256_update (TCSha256State_t s, const uint8_t *data, size_t datalen);
+int tc_sha256_update (TCSha256State_t s, const uint8_t *data, size_t datalen);
 
 /**
  *  @brief SHA256 final procedure
@@ -120,7 +120,7 @@ __attribute__((section(".ram_code"))) int tc_sha256_update (TCSha256State_t s, c
  *  @param digest unsigned eight bit integer
  *  @param Sha256 state struct
  */
-__attribute__((section(".ram_code"))) int tc_sha256_final(uint8_t *digest, TCSha256State_t s);
+int tc_sha256_final(uint8_t *digest, TCSha256State_t s);
 
 #ifdef __cplusplus
 }

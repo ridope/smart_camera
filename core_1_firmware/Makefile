@@ -1,10 +1,8 @@
 include $(BUILD_DIR)/software/include/generated/variables.mak
 include $(SOC_DIRECTORY)/software/common.mak
 
-
 OBJDIR = ./obj
 EXT_LIBDIR = ../ext_libs
-MBED_LIB = $(EXT_LIBDIR)/mbedtls/library
 
 TINY_CRYPT_OBJ := $(OBJDIR)/aes_decrypt.o \
 				$(OBJDIR)/aes_encrypt.o \
@@ -22,25 +20,16 @@ OBJECTS := $(TINY_CRYPT_OBJ) \
 INCLUDES += -I$(EXT_LIBDIR)/tinycrypt \
 			-I$(EXT_LIBDIR)/tinycrypt/lib/include \
 			-I$(EXT_LIBDIR)/tinycrypt/lib/tinycrypt \
-			-I$(EXT_LIBDIR)/mbedtls \
-			-I$(EXT_LIBDIR)/mbedtls/include \
 
 ifdef WITH_CXX
 	OBJECTS += hellocpp.o
 endif
 
-all: sram.bin main_ram.bin
+all: sram.bin
 
 
 sram.bin: demo.elf
-	$(OBJCOPY) -O binary -R .my_ram $< $@
-
-ifneq ($(OS),Windows_NT)
-	chmod -x $@
-endif
-
-main_ram.bin: demo.elf
-	$(OBJCOPY) -O binary -j .my_ram $< $@
+	$(OBJCOPY) -O binary $< $@
 
 ifneq ($(OS),Windows_NT)
 	chmod -x $@
@@ -53,10 +42,8 @@ demo.elf: $(OBJECTS)
 		$(OBJECTS) \
 		$(PACKAGES:%=-L$(BUILD_DIR)/software/%) \
 		-L$(EXT_LIBDIR)/tinycrypt/lib \
-		-L$(MBED_LIB) \
 		$(LIBS:lib%=-l%) \
 		-ltinycrypt \
-		-lmbedcrypto
 
 ifneq ($(OS),Windows_NT)
 	chmod -x $@
@@ -67,7 +54,7 @@ endif
 
 VPATH = $(BIOS_DIRECTORY):$(BIOS_DIRECTORY)/cmds:$(CPU_DIRECTORY)
 
-$(OBJDIR)/main.o: main.c $(MBED_LIB)/libmbedcrypto.a $(EXT_LIBDIR)/tinycrypt/lib/libtinycrypt.a
+$(OBJDIR)/main.o: main.c $(EXT_LIBDIR)/tinycrypt/lib/libtinycrypt.a
 	@mkdir -p $(@D)
 	$(compile)
 
@@ -82,14 +69,6 @@ $(OBJDIR)/%.o: %.cpp
 $(OBJDIR)/%.o: %.c
 	@mkdir -p $(@D)
 	$(compile)
-
-$(OBJDIR)/%_temp.o: $(EXT_LIBDIR)/tinycrypt/lib/source/aes%.c
-	@mkdir -p $(@D)
-	$(compile)
-
-$(OBJDIR)/%.o: $(OBJDIR)/%_temp.o
-	@mkdir -p $(@D)
-	$(OBJCOPY) --rename-section .text=.aes_text $< $@
 
 $(OBJDIR)/%.o: $(EXT_LIBDIR)/tinycrypt/lib/source/%.c
 	@mkdir -p $(@D)

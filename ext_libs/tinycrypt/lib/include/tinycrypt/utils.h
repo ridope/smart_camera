@@ -58,7 +58,7 @@ extern "C" {
  * @param from IN -- origin buffer
  * @param from_len IN -- length of origin buffer
  */
-__attribute__((section(".ram_code"))) unsigned int _copy(uint8_t *to, unsigned int to_len,
+unsigned int _copy(uint8_t *to, unsigned int to_len,
 	           const uint8_t *from, unsigned int from_len);
 
 /**
@@ -68,7 +68,7 @@ __attribute__((section(".ram_code"))) unsigned int _copy(uint8_t *to, unsigned i
  * @param val IN -- value to be set in 'to'
  * @param len IN -- number of times the value will be copied
  */
-__attribute__((section(".ram_code"))) void _set(void *to, uint8_t val, unsigned int len);
+void _set(void *to, uint8_t val, unsigned int len);
 
 /**
  * @brief Set the value 'val' into the buffer 'to', 'len' times, in a way
@@ -86,7 +86,7 @@ __attribute__((section(".ram_code"))) void _set(void *to, uint8_t val, unsigned 
 #ifdef TINYCRYPT_ARCH_HAS_SET_SECURE
 extern void _set_secure(void *to, uint8_t val, unsigned int len);
 #else /* ! TINYCRYPT_ARCH_HAS_SET_SECURE */
-__attribute__((section(".ram_code"))) static inline void _set_secure(void *to, uint8_t val, unsigned int len)
+static inline void _set_secure(void *to, uint8_t val, unsigned int len)
 {
   (void) memset(to, val, len);
 #ifdef __GNUC__
@@ -102,7 +102,7 @@ __attribute__((section(".ram_code"))) static inline void _set_secure(void *to, u
  *
  * @param a IN/OUT -- value to be doubled
  */
-__attribute__((section(".ram_code"))) uint8_t _double_byte(uint8_t a);
+uint8_t _double_byte(uint8_t a);
 
 /*
  * @brief Constant-time algorithm to compare if two sequences of bytes are equal
@@ -112,7 +112,7 @@ __attribute__((section(".ram_code"))) uint8_t _double_byte(uint8_t a);
  * @param b IN -- sequence of bytes b
  * @param size IN -- size of sequences a and b
  */
-__attribute__((section(".ram_code"))) int _compare(const uint8_t *a, const uint8_t *b, size_t size);
+int _compare(const uint8_t *a, const uint8_t *b, size_t size);
 
 #ifdef __cplusplus
 }

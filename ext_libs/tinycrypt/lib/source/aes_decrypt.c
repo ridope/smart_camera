@@ -59,7 +59,7 @@ static const uint8_t inv_sbox[256] = {
 	0x55, 0x21, 0x0c, 0x7d
 };
 
-__attribute__((section(".ram_code"))) int tc_aes128_set_decrypt_key(TCAesKeySched_t s, const uint8_t *k)
+int tc_aes128_set_decrypt_key(TCAesKeySched_t s, const uint8_t *k)
 {
 	return tc_aes128_set_encrypt_key(s, k);
 }
@@ -70,7 +70,7 @@ __attribute__((section(".ram_code"))) int tc_aes128_set_decrypt_key(TCAesKeySche
 #define multd(a)(mult8(a)^_double_byte(_double_byte(a))^(a))
 #define multe(a)(mult8(a)^_double_byte(_double_byte(a))^_double_byte(a))
 
-__attribute__((section(".ram_code"))) static inline void mult_row_column(uint8_t *out, const uint8_t *in)
+static inline void mult_row_column(uint8_t *out, const uint8_t *in)
 {
 	out[0] = multe(in[0]) ^ multb(in[1]) ^ multd(in[2]) ^ mult9(in[3]);
 	out[1] = mult9(in[0]) ^ multe(in[1]) ^ multb(in[2]) ^ multd(in[3]);
@@ -78,7 +78,7 @@ __attribute__((section(".ram_code"))) static inline void mult_row_column(uint8_t
 	out[3] = multb(in[0]) ^ multd(in[1]) ^ mult9(in[2]) ^ multe(in[3]);
 }
 
-__attribute__((section(".ram_code"))) static inline void inv_mix_columns(uint8_t *s)
+static inline void inv_mix_columns(uint8_t *s)
 {
 	uint8_t t[Nb*Nk];
 
@@ -89,7 +89,7 @@ __attribute__((section(".ram_code"))) static inline void inv_mix_columns(uint8_t
 	(void)_copy(s, sizeof(t), t, sizeof(t));
 }
 
-__attribute__((section(".ram_code"))) static inline void add_round_key(uint8_t *s, const unsigned int *k)
+static inline void add_round_key(uint8_t *s, const unsigned int *k)
 {
 	s[0] ^= (uint8_t)(k[0] >> 24); s[1] ^= (uint8_t)(k[0] >> 16);
 	s[2] ^= (uint8_t)(k[0] >> 8); s[3] ^= (uint8_t)(k[0]);
@@ -101,7 +101,7 @@ __attribute__((section(".ram_code"))) static inline void add_round_key(uint8_t *
 	s[14] ^= (uint8_t)(k[3] >> 8); s[15] ^= (uint8_t)(k[3]);
 }
 
-__attribute__((section(".ram_code"))) static inline void inv_sub_bytes(uint8_t *s)
+static inline void inv_sub_bytes(uint8_t *s)
 {
 	unsigned int i;
 
@@ -115,7 +115,7 @@ __attribute__((section(".ram_code"))) static inline void inv_sub_bytes(uint8_t *
  * inv_mix_columns, but performs it here to reduce the number of memory
  * operations.
  */
-__attribute__((section(".ram_code"))) static inline void inv_shift_rows(uint8_t *s)
+static inline void inv_shift_rows(uint8_t *s)
 {
 	uint8_t t[Nb*Nk];
 
@@ -126,7 +126,7 @@ __attribute__((section(".ram_code"))) static inline void inv_shift_rows(uint8_t 
 	(void)_copy(s, sizeof(t), t, sizeof(t));
 }
 
-__attribute__((section(".ram_code"))) int tc_aes_decrypt(uint8_t *out, const uint8_t *in, const TCAesKeySched_t s)
+int tc_aes_decrypt(uint8_t *out, const uint8_t *in, const TCAesKeySched_t s)
 {
 	uint8_t state[Nk*Nb];
 	unsigned int i;
