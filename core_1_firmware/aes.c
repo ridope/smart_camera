@@ -153,7 +153,7 @@ int amp_aes_encrypts(shared_data_t *data_ctrl, private_firev_data_t *priv_d)
 		}
 		
 		/* Encryption phase */
-		result = tc_ccm_generation_encryption(&data_ctrl->ciphertext[0], cipher_size, NULL, 0, &data_ctrl->predicted_class, text_len, &c);
+		result = tc_ccm_generation_encryption(&priv_d->ciphertext[0], cipher_size, NULL, 0, &data_ctrl->predicted_class, text_len, &c);
 		if (result != TC_CRYPTO_SUCCESS) {
 			printf("\e[91;1mError in the encryption. Result= %d\e[0m\n", result);
 			return -4;
