@@ -22,8 +22,6 @@
 typedef volatile struct SHARED_DATA {
     uint8_t predicted_class;
     int flag;
-
-    uint8_t ciphertext[CLASS_SIZE+MAC_LEN];
 } shared_data_t;
 
 typedef struct PRIVATE_FIREV_DATA {

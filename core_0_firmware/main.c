@@ -1,5 +1,6 @@
 // This file is Copyright (c) 2020 Florent Kermarrec <florent@enjoy-digital.fr>
 // Modified by Joseph Faye
+// Modified by Lucas Esteves <lucas.esteves-rocha@insa-rennes.fr>
 // License: BSD
 
 #include <stdio.h>
@@ -21,8 +22,6 @@
 /*-----------------------------------------------------------------------*/
 
 float *f_img = (float *)&img;
-
-
 
 static char *readstr(void)
 {
@@ -80,7 +79,7 @@ static char *get_token(char **str)
 
 static void prompt(void)
 {
-    printf("\e[92;1mfemtrov-console\e[0m> ");
+    printf("\e[92;1mCore0-console\e[0m> ");
 }
 
 /*-----------------------------------------------------------------------*/
@@ -89,60 +88,20 @@ static void prompt(void)
 
 static void help(void)
 {
-    puts("\nLiteX minimal demo app built "__DATE__" "__TIME__"\n");
+    puts("\nSVM app built "__DATE__" "__TIME__"\n");
     puts("Available commands:");
     puts("help               - Show this command");
     puts("reboot             - Reboot CPU");
-#ifdef CSR_LEDS_BASE
-    puts("led                - Led demo");
-#endif
     puts("enc                - Synchronized encryption");
-#ifdef WITH_CXX
-    puts("hellocpp           - Hello C++");
-#endif
 }
 
 /*-----------------------------------------------------------------------*/
 /* Commands                                                              */
 /*-----------------------------------------------------------------------*/
-
 static void reboot_cmd(void)
 {
     ctrl_reset_write(1);
 }
-
-#ifdef CSR_LEDS_BASE
-static void led_cmd(void)
-{
-	int i;
-	printf("Led demo...\n");
-
-	printf("Counter mode...\n");
-	for(i=0; i<32; i++) {
-		leds_out_write(i);
-		busy_wait(100);
-	}
-
-	printf("Shift mode...\n");
-	for(i=0; i<4; i++) {
-		leds_out_write(1<<i);
-		busy_wait(200);
-	}
-	for(i=0; i<4; i++) {
-		leds_out_write(1<<(3-i));
-		busy_wait(200);
-	}
-
-	printf("Dance mode...\n");
-	for(i=0; i<4; i++) {
-		leds_out_write(0x55);
-		busy_wait(200);
-		leds_out_write(0xaa);
-		busy_wait(200);
-	}
-}
-#endif
-
 
 /*-----------------------------------------------------------------------*/
 /* Console service / Main                                                */

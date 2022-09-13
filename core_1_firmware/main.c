@@ -77,7 +77,7 @@ static char *get_token(char **str)
 
 static void prompt(void)
 {
-    printf("\e[92;1mfirev-console\e[0m> ");
+    printf("\e[92;1mCore1-console\e[0m> ");
 }
 
 /*-----------------------------------------------------------------------*/
@@ -86,13 +86,10 @@ static void prompt(void)
 
 static void help(void)
 {
-    puts("\nLiteX minimal demo app built "__DATE__" "__TIME__"\n");
+    puts("\nAES app built "__DATE__" "__TIME__"\n");
     puts("Available commands:");
     puts("help               - Show this command");
     puts("reboot             - Reboot CPU");
-#ifdef CSR_LEDS_BASE
-    puts("led                - Led demo");
-#endif
     puts("enc              - Synchronized Encryption");
     puts("dec              - Decryption function test");
 }
