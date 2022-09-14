@@ -154,14 +154,13 @@ int main(void)
         console_service();
 
         if(ctrl_data.flag == 1){
-            
+            t_aes_begin = amp_millis();
+
             /* Getting data from shared memory and releasing flag */
             memcpy(&local_ctrl_data, &ctrl_data, sizeof(shared_data_t));
             ctrl_data.flag = 0;
 
             printf("\n Class received: %d - Measuring step: %lu/%d\r", ctrl_data.predicted_class, counter+1, MEASURE_STEPS);           
-
-            t_aes_begin = amp_millis();
 
             int result = 0;
             result = amp_aes_update_nonce(&local_ctrl_data, &priv_data);
