@@ -15,7 +15,7 @@
 #include <generated/csr.h>
 
 shared_data_t ctrl_data __attribute__ ((section ("shared_ram"))) ;
-private_firev_data_t priv_data __attribute__ ((section ("priv_sp"))) ;
+private_firev_data_t priv_data __attribute__ ((section ("shared_ram"))) ;
 
 /*-----------------------------------------------------------------------*/
 /* Uart                                                                  */

@@ -15,17 +15,17 @@ ifdef WITH_CXX
 endif
 
 
-all: sram.bin sp.bin
+all: sram.bin shared.bin
 
 
 sram.bin: demo.elf
-	$(OBJCOPY) -R .private_ram -O binary $< $@
+	$(OBJCOPY) -R .shared_ram -O binary $< $@
 ifneq ($(OS),Windows_NT)
 	chmod -x $@
 endif
 
-sp.bin: demo.elf
-	$(OBJCOPY) -j .private_ram -O binary $< $@
+shared.bin: demo.elf
+	$(OBJCOPY) -j .shared_ram -O binary $< $@
 ifneq ($(OS),Windows_NT)
 	chmod -x $@
 endif
@@ -66,6 +66,6 @@ $(OBJDIR)/%.o: %.S
 	$(assemble)
 
 clean:
-	$(RM) $(OBJECTS) demo.elf demo.bin .*~ *~
+	$(RM) $(OBJECTS) demo.elf *.bin .*~ *~
 
 .PHONY: all clean
