@@ -16,6 +16,7 @@
 #include <generated/csr.h>
 
 shared_data_t ctrl_data __attribute__ ((section ("shared_ram"))) ;
+shared_data_t local_ctrl_data;
 private_firev_data_t priv_data __attribute__ ((section ("priv_sp"))) ;
 
 /*-----------------------------------------------------------------------*/
@@ -120,20 +121,6 @@ static void console_service(void)
         help();
     else if(strcmp(token, "reboot") == 0)
         reboot_cmd();
-    else if(strcmp(token, "enc") == 0){
-        if(ctrl_data.flag == 1){
-            printf("Class received: %d\n", ctrl_data.predicted_class);
-
-            int result = 0;
-            result = amp_aes_update_nonce(&ctrl_data, &priv_data);
-            result = amp_aes_encrypts(&ctrl_data, &priv_data);
-
-            if (result != 0)
-            {
-                printf("\e[91;1mError in the encryption. Err= %d\e[0m\n", result);
-            }
-        }
-    }
 
     prompt();
 }
@@ -163,19 +150,22 @@ int main(void)
 
     counter = 0;
 
-    printf("\n");
-
     while(1) {
         console_service();
 
         if(ctrl_data.flag == 1){
-            printf("Class received: %d - Measuring step: %d/%d\r", ctrl_data.predicted_class, counter+1, MEASURE_STEPS);           
+            
+            /* Getting data from shared memory and releasing flag */
+            memcpy(&local_ctrl_data, &ctrl_data, sizeof(shared_data_t));
+            ctrl_data.flag = 0;
+
+            printf("\n Class received: %d - Measuring step: %lu/%d\r", ctrl_data.predicted_class, counter+1, MEASURE_STEPS);           
 
             t_aes_begin = amp_millis();
 
             int result = 0;
-            result = amp_aes_update_nonce(&ctrl_data, &priv_data);
-            result = amp_aes_encrypts(&ctrl_data, &priv_data);
+            result = amp_aes_update_nonce(&local_ctrl_data, &priv_data);
+            result = amp_aes_encrypts(&local_ctrl_data, &priv_data);
 
             t_aes_end = amp_millis();
             time_spent_ms = (t_aes_begin - t_aes_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
@@ -196,6 +186,7 @@ int main(void)
             int f_left = (int)time_spent_ms;
             int f_right = ((float)(time_spent_ms - f_left)*1000.0);
             printf("\nAES Latency for predicted class: %d is %d.%d ms\n", ctrl_data.predicted_class, f_left, f_right);
+            lat_aes_ms = 0;
         }
     }
 

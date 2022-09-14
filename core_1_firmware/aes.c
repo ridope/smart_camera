@@ -159,8 +159,6 @@ int amp_aes_encrypts(shared_data_t *data_ctrl, private_firev_data_t *priv_d)
 			return -4;
 		}
 
-		/* Releasing the flag */
-		data_ctrl->flag = 0;
 		return 0;
 
 	}else{
