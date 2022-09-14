@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "aes.h"
+#include "amp_utils.h"
 
 #include <irq.h>
 #include <libbase/uart.h>
@@ -147,6 +148,7 @@ int main(void)
     
     help();
 
+    amp_millis_init();
     amp_aes_init(&priv_data);
 
     /* Initing nonce */
@@ -154,20 +156,46 @@ int main(void)
 
     prompt();
 
+    const int MEASURE_STEPS = 50;
+    uint32_t t_aes_begin, t_aes_end, counter;
+    double lat_aes_ms;
+    float time_spent_ms;
+
+    counter = 0;
+
+    printf("\n");
+
     while(1) {
         console_service();
 
         if(ctrl_data.flag == 1){
-            printf("Class received: %d\n", ctrl_data.predicted_class);
+            printf("Class received: %d - Measuring step: %d/%d\r", ctrl_data.predicted_class, counter+1, MEASURE_STEPS);           
+
+            t_aes_begin = amp_millis();
 
             int result = 0;
             result = amp_aes_update_nonce(&ctrl_data, &priv_data);
             result = amp_aes_encrypts(&ctrl_data, &priv_data);
 
+            t_aes_end = amp_millis();
+            time_spent_ms = (t_aes_begin - t_aes_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+            lat_aes_ms += time_spent_ms;
+
+            counter++;
+
             if (result != 0)
             {
-                printf("\e[91;1mError in the encryption. Err= %d\e[0m\n", result);
+                printf("\e[91;1m\nError in the encryption. Err= %d\e[0m\n", result);
             }
+        }
+
+        if(counter == MEASURE_STEPS)
+        {
+            counter = 0;
+            time_spent_ms = lat_aes_ms/MEASURE_STEPS;
+            int f_left = (int)time_spent_ms;
+            int f_right = ((float)(time_spent_ms - f_left)*1000.0);
+            printf("\nAES Latency for predicted class: %d is %d.%d ms\n", ctrl_data.predicted_class, f_left, f_right);
         }
     }
 

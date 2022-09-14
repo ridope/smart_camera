@@ -127,10 +127,9 @@ static void console_service(void)
 
         const int MEASURE_STEPS = 50;
         double throughput_ms = 0;
-        double lat_aes_ms = 0;
         double lat_svm_ms = 0;
         uint32_t time_begin, time_end;
-        uint32_t t_aes_begin, t_aes_end, t_svm_begin, t_svm_end;
+        uint32_t t_svm_begin, t_svm_end;
         float time_spent_ms;
         int class;
 
@@ -143,23 +142,16 @@ static void console_service(void)
 
             class = predict(f_img);
 
-            t_svm_end = amp_millis();
-            t_aes_begin = t_svm_end;
+            t_svm_end = amp_millis();   
 
-            amp_send_class(class);
-
-            t_aes_end = amp_millis();
-            time_end = t_aes_end;
+            amp_send_class(class);              
+            time_end = amp_millis();
 
             time_spent_ms = (t_svm_begin - t_svm_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
             lat_svm_ms += time_spent_ms;
 
-            time_spent_ms = (t_aes_begin - t_aes_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
-            lat_aes_ms += time_spent_ms;
-
             time_spent_ms = (time_begin - time_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
             throughput_ms += time_spent_ms;
-
         }
 
          printf("\n");
@@ -170,11 +162,6 @@ static void console_service(void)
         int f_left = (int)time_spent_ms;
         int f_right = ((float)(time_spent_ms - f_left)*1000.0);
         printf("SVM Latency for predicted class: %d is %d.%d ms\n", class, f_left, f_right);
-
-        time_spent_ms = lat_aes_ms/MEASURE_STEPS;
-        f_left = (int)time_spent_ms;
-        f_right = ((float)(time_spent_ms - f_left)*1000.0);
-         printf("AES Latency to encrypt class: %d is %d.%d ms\n", class, f_left, f_right);
 
         time_spent_ms = throughput_ms/MEASURE_STEPS;
         f_left = (int)time_spent_ms;
