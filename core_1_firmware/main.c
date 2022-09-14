@@ -15,7 +15,7 @@
 #include <libbase/console.h>
 #include <generated/csr.h>
 
-shared_data_t ctrl_data __attribute__ ((section ("shared_ram"))) ;
+shared_data_t ctrl_data __attribute__ ((section ("shared_ram_first"))) ;
 private_firev_data_t priv_data __attribute__ ((section ("shared_ram"))) ;
 
 /*-----------------------------------------------------------------------*/
@@ -163,13 +163,11 @@ int main(void)
 
     counter = 0;
 
-    printf("\n");
-
     while(1) {
         console_service();
 
         if(ctrl_data.flag == 1){
-            printf("Class received: %d - Measuring step: %d/%d\r", ctrl_data.predicted_class, counter+1, MEASURE_STEPS);           
+            printf("\n Class received: %d - Measuring step: %lu/%d\r", ctrl_data.predicted_class, counter+1, MEASURE_STEPS);           
 
             t_aes_begin = amp_millis();
 
@@ -196,7 +194,10 @@ int main(void)
             int f_left = (int)time_spent_ms;
             int f_right = ((float)(time_spent_ms - f_left)*1000.0);
             printf("\nAES Latency for predicted class: %d is %d.%d ms\n", ctrl_data.predicted_class, f_left, f_right);
+            lat_aes_ms = 0;
+            prompt();
         }
+
     }
 
     return 0;

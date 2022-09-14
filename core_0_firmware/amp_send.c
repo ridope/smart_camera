@@ -1,7 +1,7 @@
 
 #include "amp_send.h"
 
-shared_data_t data __attribute__ ((section ("shared_ram")));
+shared_data_t data __attribute__ ((section ("shared_ram_first")));
 
 /**
  * @brief Inits the control flag structure 

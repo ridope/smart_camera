@@ -48,7 +48,9 @@ SECTIONS
 	.shared_ram :
 	{
 		. = ALIGN(8);
+		KEEP(*(shared_ram_first));
 		KEEP(*(shared_ram));
+		KEEP(*(shared_ram_last));
 		. = ALIGN(8);
 	} > mmap_m_0 AT > sram
 
