@@ -10,6 +10,7 @@ TINY_CRYPT_OBJ := $(OBJDIR)/aes_decrypt.o \
 				$(OBJDIR)/ctr_prng.o \
 				$(OBJDIR)/ccm_mode.o \
 				$(OBJDIR)/cmac_mode.o \
+				$(OBJDIR)/amp_utils.o 	\
 				$(OBJDIR)/utils.o
 
 OBJECTS := $(TINY_CRYPT_OBJ) \
@@ -44,6 +45,7 @@ demo.elf: $(OBJECTS)
 		-L$(EXT_LIBDIR)/tinycrypt/lib \
 		$(LIBS:lib%=-l%) \
 		-ltinycrypt \
+		-lgcc
 
 ifneq ($(OS),Windows_NT)
 	chmod -x $@
