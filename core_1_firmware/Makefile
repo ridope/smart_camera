@@ -10,13 +10,15 @@ TINY_CRYPT_OBJ := $(OBJDIR)/aes_decrypt.o \
 				$(OBJDIR)/ctr_prng.o \
 				$(OBJDIR)/ccm_mode.o \
 				$(OBJDIR)/cmac_mode.o \
-				$(OBJDIR)/amp_utils.o 	\
 				$(OBJDIR)/utils.o
 
 OBJECTS := $(TINY_CRYPT_OBJ) \
 		  $(OBJDIR)/aes.o \
 		  $(OBJDIR)/main.o \
-		  $(OBJDIR)/crt0.o
+		  $(OBJDIR)/crt0.o \
+		  $(OBJDIR)/amp_utils.o \
+		  $(OBJDIR)/amp_comms.o
+
 
 INCLUDES += -I$(EXT_LIBDIR)/tinycrypt \
 			-I$(EXT_LIBDIR)/tinycrypt/lib/include \

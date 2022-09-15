@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "amp_send.h"
+#include "amp_comms.h"
 #include "amp_utils.h"
 #include "svm_model.h"
 #include "img.h"
@@ -16,6 +16,10 @@
 #include <libbase/uart.h>
 #include <libbase/console.h>
 #include <generated/csr.h>
+
+amp_comms_tx_t _tx __attribute__ ((section ("shared_ram_first")));
+amp_comms_rx_t _rx __attribute__ ((section ("shared_ram_second")));
+private_aes_data_t private_aes __attribute__ ((section ("priv_sp_last")));
 
 /*-----------------------------------------------------------------------*/
 /* Uart                                                                  */
@@ -131,20 +135,42 @@ static void console_service(void)
         uint32_t time_begin, time_end;
         uint32_t t_svm_begin, t_svm_end;
         float time_spent_ms;
-        int class;
+        uint8_t class;
+        amp_cmds_t cmd_rx;
 
         for (int i = 0; i < MEASURE_STEPS; i++)
         {
             printf("Measuring step: %d/%d\r",i+1, MEASURE_STEPS);
             
-            time_begin = amp_millis();
+            time_begin = amp_millis();          
+            
             t_svm_begin = time_begin;
 
-            class = predict(f_img);
+            class = (uint8_t) predict(f_img);
 
-            t_svm_end = amp_millis();   
 
-            amp_send_class(class);              
+            t_svm_end = amp_millis(); 
+
+            /* Checking comunicatoin data */
+            cmd_rx = amp_comms_has_unread(&_rx);
+
+            if(cmd_rx != AMP_NULL)
+            {
+                switch (cmd_rx)
+                {
+                case AMP_SEND_AES_PRIV_DATA:
+                    amp_comms_receive(&_rx, (uint8_t * ) &private_aes, sizeof(private_aes));
+                    break;
+                
+                default:
+                    /* Clearing received commands, not implemented */
+                    amp_comms_receive(&_rx, NULL, 0);
+                    break;
+                }
+            }  
+
+            int result = amp_comms_send(&_tx, AMP_SEND_PREDICTION, &class, sizeof(class));
+
             time_end = amp_millis();
 
             time_spent_ms = (t_svm_begin - t_svm_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
@@ -180,7 +206,7 @@ int main(void)
 	irq_setie(1);
 #endif
     uart_init();
-    amp_send_init();
+    amp_comms_init(&_tx, &_rx);
     amp_millis_init();
 
     help();

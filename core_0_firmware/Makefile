@@ -4,9 +4,9 @@ include $(BUILD_DIR)/software/include/generated/variables.mak
 include $(SOC_DIRECTORY)/software/common.mak
 
 OBJDIR = ./obj
-OBJECTS := $(OBJDIR)/amp_send.o \
-			$(OBJDIR)/svm_model.o 	\
+OBJECTS := 	$(OBJDIR)/svm_model.o 	\
 			$(OBJDIR)/crt0.o 	\
+			$(OBJDIR)/amp_comms.o 	\
 			$(OBJDIR)/amp_utils.o 	\
 			$(OBJDIR)/main.o
 
