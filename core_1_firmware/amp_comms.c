@@ -32,7 +32,7 @@ int amp_comms_init(amp_comms_tx_t *tx_ctrl, amp_comms_rx_t *rx_ctrl)
 
     tx_ctrl->flag_read = 1;
     rx_ctrl->flag_received = 1;
-
+    
     return 0;
 }
 
@@ -75,7 +75,7 @@ int amp_comms_send(amp_comms_tx_t *tx_ctrl, amp_cmds_t cmd, uint8_t *data, size_
         }
 
         tx_ctrl->cmd = cmd;
-        memcpy((void *)&tx_ctrl->data[counter], (void *) &data[counter], size_to_send);
+        memcpy((void *)&tx_ctrl->data, (void *) &data[counter], size_to_send);
         tx_ctrl->flag_read = 0;
 
         counter += size_to_send;
@@ -90,7 +90,7 @@ int amp_comms_send(amp_comms_tx_t *tx_ctrl, amp_cmds_t cmd, uint8_t *data, size_
  * 
  * @param rx_ctrl  Pointer to the structure that controls the received data
  * @param data     The associated data
- * @param len      Size of the associated data to be sent
+ * @param len      Size of the associated data to be received
  * @return int     Returns 0 if success, < 0 if an error occurred
  */
 int amp_comms_receive(amp_comms_rx_t *rx_ctrl, uint8_t *data, size_t len)
@@ -117,21 +117,21 @@ int amp_comms_receive(amp_comms_rx_t *rx_ctrl, uint8_t *data, size_t len)
           /* Waits for a new message */
         while(rx_ctrl->flag_received);
 
-        int size_to_send;
+        int size_to_receive;
 
         if(len > AMP_COMMS_DATA_SIZE)
         {
-            size_to_send = AMP_COMMS_DATA_SIZE;
+            size_to_receive = AMP_COMMS_DATA_SIZE;
         }
         else
         {
-            size_to_send = len;
+            size_to_receive = len;
         }
 
-        memcpy((void *) &data[counter], (void *)&rx_ctrl->data[counter], size_to_send);
+        memcpy((void *) &data[counter], (void *)&rx_ctrl->data, size_to_receive);
         rx_ctrl->flag_received = 1;
 
-        counter += size_to_send;
+        counter += size_to_receive;
 
     }while(counter < len);
 
