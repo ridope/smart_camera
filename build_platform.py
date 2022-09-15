@@ -28,15 +28,10 @@ def main():
         args.build_dir = os.path.join(cwd, 'build')
     else:
         args.build_dir = os.path.join(cwd, args.build_dir)
-    if args.core_0 != args.core_1:
-        archi = "Heterogen"
-        soc_path = f"ext_libs/Asymetric-Multi-Processing/Anisotrop/Dual_Core/{archi}/Fire_Femto"
-    else:
-        archi = "Homogen"
-        if args.core0 == 'firev':
-            soc_path = f"ext_libs/Asymetric-Multi-Processing/Anisotrop/Dual_Core/{archi}/Fire_Fire"
-        else:
-            soc_path = f"ext_libs/Asymetric-Multi-Processing/Anisotrop/Dual_Core/{archi}/Femto_Femto"
+
+    soc_path = "ext_libs/Asymetric-Multi-Processing/Dual_Core/"
+
+    config_file = os.path.join(cwd, args.config_file)
 
     # Build Platform
     if args.build:
@@ -45,19 +40,19 @@ def main():
                 print("MAKE_AND_BUILD_INFO : Build already exists and will be deleted.")
                 shutil.rmtree(args.build_dir)
             os.chdir(os.path.join(cwd, soc_path))
-            os.system(f"./ridope_soc.py --config_file {args.config_file} --config {args.config}  "
+            os.system(f"./amp.py --config_file {config_file} --config {args.config}  "
                       f"--mux {args.mux} --build_dir {args.build_dir} --build ")
             os.chdir(cwd)
         else:
             if os.path.isdir(args.build_dir):
                 os.chdir(os.path.join(cwd, soc_path))
-                os.system(f"./ridope_soc.py --config_file {args.config_file} --config {args.config}  "
+                os.system(f"./amp.py --config_file {config_file} --config {args.config}  "
                           f"--mux {args.mux} --build_dir {args.build_dir} --build ")
                 os.chdir(cwd)
             else:
                 os.mkdir(args.build_dir)
                 os.chdir(os.path.join(cwd, soc_path))
-                os.system(f"./ridope_soc.py --config_file {args.config_file} --config {args.config}  "
+                os.system(f"./amp.py --config_file {config_file} --config {args.config}  "
                           f"--mux {args.mux} --build_dir {args.build_dir} --build ")
                 os.chdir(cwd)
 

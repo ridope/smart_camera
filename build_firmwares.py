@@ -14,8 +14,9 @@ _VALID_CORE_NAME = {'firev', 'femtorv'}
 def main():
     parser = argparse.ArgumentParser(description="LiteX Bare Metal AES App on AMP Architecture.")
     parser.add_argument("--core_0", type=str, help="Core 0 name.", required=True)
-    parser.add_argument("--firmware_0", type=str, required=True, )
     parser.add_argument("--core_1",  type=str, help="Core 1 name", required=True)
+    parser.add_argument("--firmware_0", type=str, help="Firmware dir 0", required=True)
+    parser.add_argument("--firmware_1", type=str, help="Firmware dir 1", required=True)
     parser.add_argument("--build_dir", type=str, help="Build the target platform.", required=True)
     parser.add_argument('--make_clean', action="store_true", help="Make clean command to firmware folders.")
     parser.add_argument('--make_clean_lib', action="store_true", help="Make clean command to Mbdedtls library folders.")
@@ -50,9 +51,9 @@ def main():
 
     # Set firmware directories
 
-    firm0 = "core_0_firmware"
+    firm0 = args.firmware_0
     os.makedirs(firm0, exist_ok=True)
-    firm1 = "core_1_firmware"
+    firm1 = args.firmware_1
     os.makedirs(firm1, exist_ok=True)
 
     # Set content for crt0.d file
@@ -75,13 +76,13 @@ def main():
         core_0_build_path = os.path.join(cwd, args.build_dir, "{}_soc_0".format(args.core_0))
         core_1_build_path = os.path.join(cwd, args.build_dir, "{}_soc_1".format(args.core_1))
 
-    for build_path, i in zip([core_0_build_path, core_1_build_path], range(2)):
+    for build_path, firmware in zip([core_0_build_path, core_1_build_path], [firm0, firm1]):
         print("*******************************************************************************************************")
-        print("Firmware {}".format(i))
+        print(f"Firmware {firmware}")
         # Compile firmware
         build_path = build_path if os.path.isabs(build_path) else os.path.join("..", build_path)
         print("MAKE_AND_BUILD_INFO : Build path {}".format(build_path))
-        os.chdir(os.path.join(cwd, f"core_{i}_firmware"))
+        os.chdir(os.path.join(cwd, f"{firmware}"))
         os.system(f"export BUILD_DIR={build_path} && {'export WITH_CXX=1 &&' if args.with_cxx else ''} "
                   f" {'make clean' if args.make_clean else 'make all'}")
         os.chdir(cwd)
