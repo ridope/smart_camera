@@ -64,14 +64,15 @@ int amp_comms_send(amp_comms_tx_t *tx_ctrl, amp_cmds_t cmd, uint8_t *data, size_
         while(!tx_ctrl->flag_read);
 
         int size_to_send;
+        int bits_left = len - counter;
 
-        if(len > AMP_COMMS_DATA_SIZE)
+        if(bits_left > AMP_COMMS_DATA_SIZE)
         {
             size_to_send = AMP_COMMS_DATA_SIZE;
         }
         else
         {
-            size_to_send = len;
+            size_to_send = bits_left;
         }
 
         tx_ctrl->cmd = cmd;
@@ -109,23 +110,25 @@ int amp_comms_receive(amp_comms_rx_t *rx_ctrl, uint8_t *data, size_t len)
     if(len == 0)
     {
         rx_ctrl->flag_received = 1;
+        return 0;
     }
 
-    size_t counter = 0;
+    int counter = 0;
 
     do {
           /* Waits for a new message */
         while(rx_ctrl->flag_received);
 
         int size_to_receive;
+        int bits_left = len - counter;
 
-        if(len > AMP_COMMS_DATA_SIZE)
+        if(bits_left > AMP_COMMS_DATA_SIZE)
         {
-            size_to_receive = AMP_COMMS_DATA_SIZE;
+            size_to_receive = AMP_COMMS_DATA_SIZE ;
         }
         else
         {
-            size_to_receive = len;
+            size_to_receive = bits_left;
         }
 
         memcpy((void *) &data[counter], (void *)&rx_ctrl->data, size_to_receive);
