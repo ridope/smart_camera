@@ -28,12 +28,16 @@ ifdef WITH_CXX
 	OBJECTS += hellocpp.o
 endif
 
-all: sram.bin
-
+all: sram.bin sp.bin
 
 sram.bin: demo.elf
-	$(OBJCOPY) -O binary $< $@
+	$(OBJCOPY) -R .private_ram -O binary $< $@
+ifneq ($(OS),Windows_NT)
+	chmod -x $@
+endif
 
+sp.bin: demo.elf
+	$(OBJCOPY) -j .private_ram -O binary $< $@
 ifneq ($(OS),Windows_NT)
 	chmod -x $@
 endif

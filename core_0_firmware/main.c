@@ -10,22 +10,25 @@
 #include "amp_comms.h"
 #include "amp_utils.h"
 #include "svm_model.h"
-#include "img.h"
 
 #include <irq.h>
 #include <libbase/uart.h>
 #include <libbase/console.h>
 #include <generated/csr.h>
 
+#define IMG_LEN 3136
+
 amp_comms_tx_t _tx __attribute__ ((section ("shared_ram_first")));
 amp_comms_rx_t _rx __attribute__ ((section ("shared_ram_second")));
-private_aes_data_t private_aes __attribute__ ((section ("priv_sp_last")));
+
+const int img_len = IMG_LEN;
+uint8_t img[IMG_LEN];
+float *f_img;
 
 /*-----------------------------------------------------------------------*/
 /* Uart                                                                  */
 /*-----------------------------------------------------------------------*/
 
-float *f_img = (float *)&img;
 
 static char *readstr(void)
 {
@@ -107,6 +110,43 @@ static void reboot_cmd(void)
     ctrl_reset_write(1);
 }
 
+
+/**
+ * @brief Top function to retrieve image for prediction
+ * 
+ * @param tx_ctrl   Pointer to the structure that controls the transmited data
+ * @param rx_ctrl   Pointer to the structure that controls the received data
+ * @param img       Image storage pointer
+ * @param len       Image Lenght
+ */
+void retrieve_img(amp_comms_tx_t *tx_ctrl, amp_comms_rx_t *rx_ctrl, uint8_t *img, size_t len)
+{
+
+    amp_comms_send(tx_ctrl, AMP_GET_IMG, (uint8_t *)&len, sizeof(len));
+
+     amp_cmds_t cmd_rx;
+
+    // Waits for the first package of the image
+    do
+    {
+        cmd_rx = amp_comms_has_unread(rx_ctrl);
+    } while (cmd_rx == AMP_NULL);
+
+
+    switch (cmd_rx)
+    {
+    case AMP_SEND_IMG:
+        amp_comms_receive(&_rx, img, len);
+        break;
+    
+    default:
+        /* Blocking program, command not implemented */
+        while(1);
+        break;
+    }         
+
+}
+
 /*-----------------------------------------------------------------------*/
 /* Console service / Main                                                */
 /*-----------------------------------------------------------------------*/
@@ -123,10 +163,6 @@ static void console_service(void)
         help();
     else if(strcmp(token, "reboot") == 0)
         reboot_cmd();
-#ifdef CSR_LEDS_BASE
-        else if(strcmp(token, "led") == 0)
-		led_cmd();
-#endif
     else if(strcmp(token, "enc") == 0){
 
         const int MEASURE_STEPS = 50;
@@ -136,40 +172,22 @@ static void console_service(void)
         uint32_t t_svm_begin, t_svm_end;
         float time_spent_ms;
         uint8_t class;
-        amp_cmds_t cmd_rx;
+       
 
         for (int i = 0; i < MEASURE_STEPS; i++)
         {
             printf("Measuring step: %d/%d\r",i+1, MEASURE_STEPS);
             
-            time_begin = amp_millis();          
-            
-            t_svm_begin = time_begin;
+            time_begin = amp_millis();
+            t_svm_begin = amp_millis();;
 
             class = (uint8_t) predict(f_img);
 
+            t_svm_end = amp_millis();
 
-            t_svm_end = amp_millis(); 
+            retrieve_img(&_tx, &_rx, &img[0], img_len);
 
-            /* Checking comunicatoin data */
-            cmd_rx = amp_comms_has_unread(&_rx);
-
-            if(cmd_rx != AMP_NULL)
-            {
-                switch (cmd_rx)
-                {
-                case AMP_SEND_AES_PRIV_DATA:
-                    amp_comms_receive(&_rx, (uint8_t * ) &private_aes, sizeof(private_aes));
-                    break;
-                
-                default:
-                    /* Clearing received commands, not implemented */
-                    amp_comms_receive(&_rx, NULL, 0);
-                    break;
-                }
-            }  
-
-            int result = amp_comms_send(&_tx, AMP_SEND_PREDICTION, &class, sizeof(class));
+            amp_comms_send(&_tx, AMP_SEND_PREDICTION, &class, sizeof(class));
 
             time_end = amp_millis();
 
@@ -180,8 +198,7 @@ static void console_service(void)
             throughput_ms += time_spent_ms;
         }
 
-         printf("\n");
-
+        printf("\n");
 
         /* Allowing printf to display float will increase code size, so the parts of the float number are being extracted belw */
         time_spent_ms = lat_svm_ms/MEASURE_STEPS;
@@ -194,8 +211,7 @@ static void console_service(void)
         f_right = ((float)(time_spent_ms - f_left)*1000.0);
         printf("Throughput for predicted class: %d is %d.%d ms\n", class, f_left, f_right);
     }
-
-
+    
     prompt();
 }
 
@@ -211,6 +227,8 @@ int main(void)
 
     help();
     prompt();
+
+    f_img = (float *)&img[0];
 
     while(1) {
         console_service();

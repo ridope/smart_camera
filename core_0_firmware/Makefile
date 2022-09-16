@@ -66,6 +66,6 @@ $(OBJDIR)/%.o: %.S
 	$(assemble)
 
 clean:
-	$(RM) $(OBJECTS) demo.elf demo.bin .*~ *~
+	$(RM) $(OBJECTS) demo.elf demo.bin .*~ *~ $(OBJDIR)/*
 
 .PHONY: all clean

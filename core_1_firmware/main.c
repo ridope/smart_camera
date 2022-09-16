@@ -8,7 +8,9 @@
 #include <string.h>
 
 #include "aes.h"
+#include "amp_comms.h"
 #include "amp_utils.h"
+#include "img.h"
 
 #include <irq.h>
 #include <libbase/uart.h>
@@ -17,7 +19,7 @@
 
 amp_comms_tx_t _tx __attribute__ ((section ("shared_ram_second")));
 amp_comms_rx_t _rx __attribute__ ((section ("shared_ram_first")));
-private_aes_data_t private_aes;
+private_aes_data_t private_aes __attribute__ ((section ("priv_sp_last")));
 
 /*-----------------------------------------------------------------------*/
 /* Uart                                                                  */
@@ -149,7 +151,8 @@ int main(void)
     double lat_aes_ms;
     float time_spent_ms;
     amp_cmds_t cmd_rx;
-    uint8_t class_predicted;
+    int img_size;
+    uint8_t sel_op, class_predicted;
 
     counter = 0;
 
@@ -170,34 +173,47 @@ int main(void)
             {
             case AMP_SEND_PREDICTION:
                 amp_comms_receive(&_rx, &class_predicted, sizeof(class_predicted));
+                sel_op = 1;
                 break;
-            
+            case AMP_GET_IMG:
+                amp_comms_receive(&_rx, (uint8_t *)&img_size, sizeof(img_size));
+                sel_op = 2;
+                break;
             default:
-                /* Clearing received commands, not implemented */
-                amp_comms_receive(&_rx, NULL, 0);
+                 /* Blocking program, command not implemented */
+                while(1);
+                sel_op = 0;
                 break;
             }
 
-            printf("Class received: %d - Measuring step: %lu/%d\r", class_predicted, counter+1, MEASURE_STEPS);
-
-            t_aes_begin = amp_millis();
-
-            int result = 0;
-            
-            result = amp_aes_update_nonce(&private_aes);
-            result = amp_aes_encrypts(&class_predicted, &private_aes);
-            
-            t_aes_end = amp_millis();
-            time_spent_ms = (t_aes_begin - t_aes_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
-            lat_aes_ms += time_spent_ms;
-
-            amp_comms_send(&_tx, AMP_SEND_AES_PRIV_DATA, (uint8_t *) &private_aes, sizeof(private_aes));
-
-            counter++;
-
-            if (result != 0)
+            if(sel_op == 1)
             {
-                printf("\e[91;1m\nError in the encryption. Err= %d\e[0m\n", result);
+
+                printf("Class received: %d - Measuring step: %lu/%d\r", class_predicted, counter+1, MEASURE_STEPS);
+
+                t_aes_begin = amp_millis();
+
+                int result = 0;
+                
+                result = amp_aes_update_nonce(&private_aes);
+                result = amp_aes_encrypts(&class_predicted, &private_aes);
+                
+                t_aes_end = amp_millis();
+                time_spent_ms = (t_aes_begin - t_aes_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+                lat_aes_ms += time_spent_ms;
+
+                counter++;
+
+                if (result != 0)
+                {
+                    printf("\e[91;1m\nError in the encryption. Err= %d\e[0m\n", result);
+                }
+
+            }
+            else if(sel_op == 2)
+            {
+                // TODO: Make protections for img_size, so img_size isn't bigger than img.h/img_len
+                amp_comms_send(&_tx, AMP_SEND_IMG, &img[0], img_size);
             }
         }  
 
@@ -208,7 +224,7 @@ int main(void)
             int f_left = (int)time_spent_ms;
             int f_right = ((float)(time_spent_ms - f_left)*1000.0);
             printf("\nAES Latency for predicted class: %d is %d.%d ms\n", class_predicted, f_left, f_right);
-            time_spent_ms = 0;
+            lat_aes_ms = 0;
             prompt();
         }
     }
