@@ -18,6 +18,7 @@ def main():
     parser.add_argument("--mux",             default=False,          help="Build the SoC with double output UART or shared UART.")
     parser.add_argument("--config_file",     default='configs.json', help="config file path.")
     parser.add_argument("--config",          default='config_1',     help='configuration to choose.')
+    parser.add_argument("--bus_data_width",  type=int,               default=16, help= "Super SoC bus data size")
     parser.add_argument("--build_dir",       default='',             help="Base output dir.")
     parser.add_argument("--load",            action="store_true",    help="Load the code to the board.")
     args = parser.parse_args()
@@ -40,19 +41,22 @@ def main():
                 print("MAKE_AND_BUILD_INFO : Build already exists and will be deleted.")
                 shutil.rmtree(args.build_dir)
             os.chdir(os.path.join(cwd, soc_path))
-            os.system(f"./amp.py --config_file {config_file} --config {args.config}  "
+            os.system(f"./amp.py --config_file {config_file} --config {args.config} "
+                      f"--bus_data_width {args.bus_data_width} "
                       f"--mux {args.mux} --build_dir {args.build_dir} --build ")
             os.chdir(cwd)
         else:
             if os.path.isdir(args.build_dir):
                 os.chdir(os.path.join(cwd, soc_path))
-                os.system(f"./amp.py --config_file {config_file} --config {args.config}  "
+                os.system(f"./amp.py --config_file {config_file} --config {args.config} "
+                          f"--bus_data_width {args.bus_data_width} "
                           f"--mux {args.mux} --build_dir {args.build_dir} --build ")
                 os.chdir(cwd)
             else:
                 os.mkdir(args.build_dir)
                 os.chdir(os.path.join(cwd, soc_path))
-                os.system(f"./amp.py --config_file {config_file} --config {args.config}  "
+                os.system(f"./amp.py --config_file {config_file} --config {args.config} "
+                          f"--bus_data_width {args.bus_data_width} "
                           f"--mux {args.mux} --build_dir {args.build_dir} --build ")
                 os.chdir(cwd)
 
@@ -60,8 +64,9 @@ def main():
     if args.load:
         print("We're loading baby !")
         os.chdir(os.path.join(cwd, soc_path))
-        os.system(f"./ridope_soc.py --config_file {args.config_file} --config {args.config}  "
-                f"--mux {args.mux} --build_dir {args.build_dir} --load ")
+        os.system(f"./amp.py --config_file {config_file} --config {args.config} "
+                  f"--bus_data_width {args.bus_data_width} "
+                  f"--mux {args.mux} --build_dir {args.build_dir} --load ")
         os.chdir(cwd)
 
 

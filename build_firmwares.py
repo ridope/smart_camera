@@ -13,14 +13,14 @@ _VALID_CORE_NAME = {'firev', 'femtorv'}
 
 def main():
     parser = argparse.ArgumentParser(description="LiteX Bare Metal AES App on AMP Architecture.")
-    parser.add_argument("--core_0", type=str, help="Core 0 name.", required=True)
-    parser.add_argument("--core_1",  type=str, help="Core 1 name", required=True)
-    parser.add_argument("--firmware_0", type=str, help="Firmware dir 0", required=True)
-    parser.add_argument("--firmware_1", type=str, help="Firmware dir 1", required=True)
-    parser.add_argument("--build_dir", type=str, help="Build the target platform.", required=True)
-    parser.add_argument('--make_clean', action="store_true", help="Make clean command to firmware folders.")
+    parser.add_argument("--core_0",         type=str,            help="Core 0 name.",               required=True)
+    parser.add_argument("--core_1",         type=str,            help="Core 1 name",                required=True)
+    parser.add_argument("--firmware_0",     type=str,            help="Firmware dir 0",             required=True)
+    parser.add_argument("--firmware_1",     type=str,            help="Firmware dir 1",             required=True)
+    parser.add_argument("--build_dir",      type=str,            help="Build the target platform.", required=True)
+    parser.add_argument('--make_clean',     action="store_true", help="Make clean command to firmware folders.")
     parser.add_argument('--make_clean_lib', action="store_true", help="Make clean command to Mbdedtls library folders.")
-    parser.add_argument("--with-cxx",   action="store_true", help="Enable CXX support.")
+    parser.add_argument("--with-cxx",       action="store_true", help="Enable CXX support.")
     args = parser.parse_args()
 
     cwd = os.getcwd()
@@ -83,11 +83,17 @@ def main():
         build_path = build_path if os.path.isabs(build_path) else os.path.join("..", build_path)
         print("MAKE_AND_BUILD_INFO : Build path {}".format(build_path))
         os.chdir(os.path.join(cwd, f"{firmware}"))
-        os.system(f"export BUILD_DIR={build_path} && {'export WITH_CXX=1 &&' if args.with_cxx else ''} "
-                  f" {'make clean' if args.make_clean else 'make all'}")
+        print(os.getcwd())
+        if args.make_clean:
+            os.system(f"export BUILD_DIR={build_path} && {'export WITH_CXX=1 &&' if args.with_cxx else ''} "
+                      f"make clean ")
+            os.system(f"export BUILD_DIR={build_path} && {'export WITH_CXX=1 &&' if args.with_cxx else ''} "
+                      f"make all ")
+        else:
+            os.system(f"export BUILD_DIR={build_path} && {'export WITH_CXX=1 &&' if args.with_cxx else ''} "
+                      f"make all ")
         os.chdir(cwd)
         print("*******************************************************************************************************")
-
 
 if __name__ == "__main__":
     main()
