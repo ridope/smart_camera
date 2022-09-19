@@ -4,11 +4,17 @@ include $(BUILD_DIR)/software/include/generated/variables.mak
 include $(SOC_DIRECTORY)/software/common.mak
 
 OBJDIR = ./obj
-OBJECTS := $(OBJDIR)/amp_send.o \
+EXT_LIBDIR = ../ext_libs
+
+AMP_LIB_OBJ := $(OBJDIR)/amp_utils.o \
+			$(OBJDIR)/amp_comms.o
+
+OBJECTS := $(AMP_LIB_OBJ) \
 			$(OBJDIR)/svm_model.o 	\
 			$(OBJDIR)/crt0.o 	\
-			$(OBJDIR)/amp_utils.o 	\
 			$(OBJDIR)/main.o
+
+INCLUDES += -I$(EXT_LIBDIR)/amp_lib/include
 
 ifdef WITH_CXX
 	OBJECTS += hellocpp.o
@@ -36,7 +42,9 @@ demo.elf: $(OBJECTS)
 	$(CC) -Os $(LDFLAGS) -Wl,--print-memory-usage -T linker.ld -N -o $@ \
 		$(OBJECTS) \
 		$(PACKAGES:%=-L$(BUILD_DIR)/software/%) \
+		-L$(EXT_LIBDIR)/amp_lib \
 		$(LIBS:lib%=-l%) \
+		-lamplib \
 		-lgcc
 
 ifneq ($(OS),Windows_NT)
@@ -47,7 +55,11 @@ endif
 -include $(OBJECTS:.o=.d)
 
 
-VPATH = $(BIOS_DIRECTORY):$(BIOS_DIRECTORY)/cmds:$(CPU_DIRECTORY)
+VPATH = $(BIOS_DIRECTORY):$(BIOS_DIRECTORY)/cmds:$(CPU_DIRECTORY):$(EXT_LIBDIR)/amp_lib/source
+
+$(OBJDIR)/main.o: main.c $(EXT_LIBDIR)/amp_lib/libamplib.a
+	@mkdir -p $(@D)
+	$(compile)
 
 $(OBJDIR)/crt0.o: $(CPU_DIRECTORY)/crt0.S
 	@mkdir -p $(@D)
@@ -60,6 +72,13 @@ $(OBJDIR)/%.o: %.cpp
 $(OBJDIR)/%.o: %.c
 	@mkdir -p $(@D)
 	$(compile)
+
+$(OBJDIR)/%.o: $(EXT_LIBDIR)/amp_lib/source/%.c
+	@mkdir -p $(@D)
+	$(compile)
+
+$(EXT_LIBDIR)/amp_lib/libamplib.a: $(AMP_LIB_OBJ)
+	$(AR) $(ARFLAGS) $@ $^
 
 $(OBJDIR)/%.o: %.S
 	@mkdir -p $(@D)

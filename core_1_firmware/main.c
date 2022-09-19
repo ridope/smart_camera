@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "aes.h"
+#include "amp_comms.h"
 #include "amp_utils.h"
 
 #include <irq.h>
@@ -15,9 +16,9 @@
 #include <libbase/console.h>
 #include <generated/csr.h>
 
-shared_data_t ctrl_data __attribute__ ((section ("shared_ram_first"))) ;
-shared_data_t local_ctrl_data;
-private_firev_data_t priv_data __attribute__ ((section ("shared_ram"))) ;
+amp_comms_tx_t _tx __attribute__ ((section ("shared_ram_second")));
+amp_comms_rx_t _rx __attribute__ ((section ("shared_ram_first")));
+private_aes_data_t  priv_data __attribute__ ((section ("shared_ram")));
 
 /*-----------------------------------------------------------------------*/
 /* Uart                                                                  */
@@ -92,8 +93,6 @@ static void help(void)
     puts("Available commands:");
     puts("help               - Show this command");
     puts("reboot             - Reboot CPU");
-    puts("enc              - Synchronized Encryption");
-    puts("dec              - Decryption function test");
 }
 
 /*-----------------------------------------------------------------------*/
@@ -137,58 +136,105 @@ int main(void)
 
     amp_millis_init();
     amp_aes_init(&priv_data);
+    amp_comms_init(&_tx, &_rx);
 
     /* Initing nonce */
-    amp_aes_update_nonce(&ctrl_data, &priv_data);
+    amp_aes_update_nonce(&priv_data);
 
     prompt();
 
-    const int MEASURE_STEPS = 50;
-    uint32_t t_aes_begin, t_aes_end, counter;
-    double lat_aes_ms;
+    const int MEASURE_STEPS = 100;
+    uint32_t t_aes_begin, t_aes_end, counter, t_send_begin,  t_send_end, t_receive_begin, t_receive_end;
+    double lat_aes_ms = 0;
+    double t_send_ms = 0;
+    double t_receive_ms = 0;
     float time_spent_ms;
+    amp_cmds_t cmd_rx;
+    int img_size;
+    uint8_t sel_op, class_predicted;
 
     counter = 0;
 
     while(1) {
         console_service();
 
-        if(ctrl_data.flag == 1){
-            t_aes_begin = amp_millis();
+        /* Checking comunication data */
+        cmd_rx = amp_comms_has_unread(&_rx);
 
-            /* Getting data from shared memory and releasing flag */
-            memcpy(&local_ctrl_data, &ctrl_data, sizeof(shared_data_t));
-            ctrl_data.flag = 0;
-
-            printf("\n Class received: %d - Measuring step: %lu/%d\r", ctrl_data.predicted_class, counter+1, MEASURE_STEPS);           
-
-            int result = 0;
-            result = amp_aes_update_nonce(&local_ctrl_data, &priv_data);
-            result = amp_aes_encrypts(&local_ctrl_data, &priv_data);
-
-            t_aes_end = amp_millis();
-            time_spent_ms = (t_aes_begin - t_aes_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
-            lat_aes_ms += time_spent_ms;
-
-            counter++;
-
-            if (result != 0)
+        if(cmd_rx != AMP_NULL)
+        {
+            if(counter == 0)
             {
-                printf("\e[91;1m\nError in the encryption. Err= %d\e[0m\n", result);
+                printf("\n");
+            }
+
+            switch (cmd_rx)
+            {
+                case AMP_SEND_PREDICTION:
+                    t_receive_begin = amp_millis();
+                    amp_comms_receive(&_rx, &class_predicted, sizeof(class_predicted));
+                    t_receive_end = amp_millis();
+
+                    time_spent_ms = (t_receive_begin - t_receive_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+                    t_receive_ms += time_spent_ms;
+
+                    sel_op = 1;
+                    break;
+
+                default:
+                    /* Blocking program, command not implemented */
+                    while(1);
+                    sel_op = 0;
+                    break;
+            }
+
+            if(sel_op  == 1){
+                
+                printf("Class received: %d - Measuring step: %lu/%d\r", class_predicted, counter+1, MEASURE_STEPS);          
+
+                t_aes_begin = amp_millis();
+
+                int result = 0;
+                result = amp_aes_update_nonce(&priv_data);
+                result = amp_aes_encrypts(&class_predicted, &priv_data);
+
+                t_aes_end = amp_millis();
+                time_spent_ms = (t_aes_begin - t_aes_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+                lat_aes_ms += time_spent_ms;
+
+                counter++;
+
+                if (result != 0)
+                {
+                    printf("\e[91;1m\nError in the encryption. Err= %d\e[0m\n", result);
+                }
             }
         }
 
         if(counter == MEASURE_STEPS)
         {
             counter = 0;
+
             time_spent_ms = lat_aes_ms/MEASURE_STEPS;
             int f_left = (int)time_spent_ms;
             int f_right = ((float)(time_spent_ms - f_left)*1000.0);
-            printf("\nAES Latency for predicted class: %d is %d.%d ms\n", ctrl_data.predicted_class, f_left, f_right);
+            printf("\nAES Latency for predicted class: %d is %d.%d ms\n", class_predicted, f_left, f_right);
+
+            time_spent_ms = t_send_ms/MEASURE_STEPS;
+            f_left = (int)time_spent_ms;
+            f_right = ((float)(time_spent_ms - f_left)*1000.0);
+            printf("Total Communication send is %d.%d ms\n", f_left, f_right);
+
+            time_spent_ms = t_receive_ms/MEASURE_STEPS;
+            f_left = (int)time_spent_ms;
+            f_right = ((float)(time_spent_ms - f_left)*1000.0);
+            printf("Total Communication receive is %d.%d ms\n", f_left, f_right);
+
+            t_receive_ms = 0;
+            t_send_ms = 0;
             lat_aes_ms = 0;
             prompt();
         }
-
     }
 
     return 0;
