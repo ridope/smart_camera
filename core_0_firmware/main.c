@@ -25,6 +25,9 @@ const int img_len = IMG_LEN;
 uint8_t img[IMG_LEN];
 float *f_img;
 
+
+void retrieve_img(amp_comms_tx_t *tx_ctrl, amp_comms_rx_t *rx_ctrl, uint8_t *img, size_t len, double *t_send, double *t_receive);
+
 /*-----------------------------------------------------------------------*/
 /* Uart                                                                  */
 /*-----------------------------------------------------------------------*/
@@ -119,12 +122,19 @@ static void reboot_cmd(void)
  * @param img       Image storage pointer
  * @param len       Image Lenght
  */
-void retrieve_img(amp_comms_tx_t *tx_ctrl, amp_comms_rx_t *rx_ctrl, uint8_t *img, size_t len)
+void retrieve_img(amp_comms_tx_t *tx_ctrl, amp_comms_rx_t *rx_ctrl, uint8_t *img, size_t len, double *t_send, double *t_receive)
 {
+    uint32_t time_begin, time_end;
+    float time_spent_ms;
 
+    time_begin = amp_millis();
     amp_comms_send(tx_ctrl, AMP_GET_IMG, (uint8_t *)&len, sizeof(len));
+    time_end = amp_millis();
 
-     amp_cmds_t cmd_rx;
+    time_spent_ms = (time_begin - time_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+    *t_send += time_spent_ms;
+
+    amp_cmds_t cmd_rx;
 
     // Waits for the first package of the image
     do
@@ -136,7 +146,12 @@ void retrieve_img(amp_comms_tx_t *tx_ctrl, amp_comms_rx_t *rx_ctrl, uint8_t *img
     switch (cmd_rx)
     {
     case AMP_SEND_IMG:
+        time_begin = amp_millis();
         amp_comms_receive(&_rx, img, len);
+        time_end = amp_millis();
+
+        time_spent_ms = (time_begin - time_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+        *t_receive += time_spent_ms;
         break;
     
     default:
@@ -165,11 +180,13 @@ static void console_service(void)
         reboot_cmd();
     else if(strcmp(token, "enc") == 0){
 
-        const int MEASURE_STEPS = 50;
+        const int MEASURE_STEPS = 100;
         double throughput_ms = 0;
         double lat_svm_ms = 0;
+        double send_ms = 0;
+        double receive_ms = 0;
         uint32_t time_begin, time_end;
-        uint32_t t_svm_begin, t_svm_end;
+        uint32_t t_svm_begin, t_svm_end, t_send_begin, t_send_end;
         float time_spent_ms;
         uint8_t class;
        
@@ -179,23 +196,27 @@ static void console_service(void)
             printf("Measuring step: %d/%d\r",i+1, MEASURE_STEPS);
             
             time_begin = amp_millis();
-            t_svm_begin = amp_millis();;
 
+            t_svm_begin = amp_millis();
             class = (uint8_t) predict(f_img);
-
             t_svm_end = amp_millis();
 
-            retrieve_img(&_tx, &_rx, &img[0], img_len);
+            retrieve_img(&_tx, &_rx, &img[0], img_len, &send_ms, &receive_ms);
 
+            t_send_begin = amp_millis();
             amp_comms_send(&_tx, AMP_SEND_PREDICTION, &class, sizeof(class));
+            t_send_end = amp_millis();
 
             time_end = amp_millis();
 
             time_spent_ms = (t_svm_begin - t_svm_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
-            lat_svm_ms += time_spent_ms;
+            lat_svm_ms += time_spent_ms; 
 
             time_spent_ms = (time_begin - time_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
             throughput_ms += time_spent_ms;
+
+            time_spent_ms = (t_send_begin - t_send_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+            send_ms += time_spent_ms;
         }
 
         printf("\n");
@@ -210,6 +231,16 @@ static void console_service(void)
         f_left = (int)time_spent_ms;
         f_right = ((float)(time_spent_ms - f_left)*1000.0);
         printf("Throughput for predicted class: %d is %d.%d ms\n", class, f_left, f_right);
+
+        time_spent_ms = send_ms/MEASURE_STEPS;
+        f_left = (int)time_spent_ms;
+        f_right = ((float)(time_spent_ms - f_left)*1000.0);
+        printf("Total Communication send time  is : %d.%d ms\n", f_left, f_right);
+
+        time_spent_ms = receive_ms/MEASURE_STEPS;
+        f_left = (int)time_spent_ms;
+        f_right = ((float)(time_spent_ms - f_left)*1000.0);
+        printf("Total Communication receive time  is : %d.%d ms\n", f_left, f_right);
     }
     
     prompt();

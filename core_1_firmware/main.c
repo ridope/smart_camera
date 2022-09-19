@@ -146,9 +146,11 @@ int main(void)
 
     prompt();
 
-    const int MEASURE_STEPS = 50;
-    uint32_t t_aes_begin, t_aes_end, counter;
-    double lat_aes_ms;
+    const int MEASURE_STEPS = 100;
+    uint32_t t_aes_begin, t_aes_end, counter, t_send_begin,  t_send_end, t_receive_begin, t_receive_end;
+    double lat_aes_ms = 0;
+    double t_send_ms = 0;
+    double t_receive_ms = 0;
     float time_spent_ms;
     amp_cmds_t cmd_rx;
     int img_size;
@@ -172,13 +174,26 @@ int main(void)
             switch (cmd_rx)
             {
             case AMP_SEND_PREDICTION:
+                t_receive_begin = amp_millis();
                 amp_comms_receive(&_rx, &class_predicted, sizeof(class_predicted));
+                t_receive_end = amp_millis();
+
+                time_spent_ms = (t_receive_begin - t_receive_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+                t_receive_ms += time_spent_ms;
+
                 sel_op = 1;
                 break;
+
             case AMP_GET_IMG:
+                t_receive_begin = amp_millis();
                 amp_comms_receive(&_rx, (uint8_t *)&img_size, sizeof(img_size));
+                t_receive_end = amp_millis();
+
+                time_spent_ms = (t_receive_begin - t_receive_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+                t_receive_ms += time_spent_ms;
                 sel_op = 2;
                 break;
+
             default:
                  /* Blocking program, command not implemented */
                 while(1);
@@ -213,17 +228,36 @@ int main(void)
             else if(sel_op == 2)
             {
                 // TODO: Make protections for img_size, so img_size isn't bigger than img.h/img_len
+                t_send_begin = amp_millis();
                 amp_comms_send(&_tx, AMP_SEND_IMG, &img[0], img_size);
+                t_send_end = amp_millis();
+
+                time_spent_ms = (t_send_begin - t_send_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+                t_send_ms += time_spent_ms;
             }
         }  
 
         if(counter == MEASURE_STEPS)
         {
             counter = 0;
+
             time_spent_ms = lat_aes_ms/MEASURE_STEPS;
             int f_left = (int)time_spent_ms;
             int f_right = ((float)(time_spent_ms - f_left)*1000.0);
             printf("\nAES Latency for predicted class: %d is %d.%d ms\n", class_predicted, f_left, f_right);
+
+            time_spent_ms = t_send_ms/MEASURE_STEPS;
+            f_left = (int)time_spent_ms;
+            f_right = ((float)(time_spent_ms - f_left)*1000.0);
+            printf("Total Communication send is %d.%d ms\n", f_left, f_right);
+
+            time_spent_ms = t_receive_ms/MEASURE_STEPS;
+            f_left = (int)time_spent_ms;
+            f_right = ((float)(time_spent_ms - f_left)*1000.0);
+            printf("Total Communication receive is %d.%d ms\n", f_left, f_right);
+
+            t_receive_ms = 0;
+            t_send_ms = 0;
             lat_aes_ms = 0;
             prompt();
         }
