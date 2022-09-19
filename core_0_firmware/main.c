@@ -176,7 +176,7 @@ static void console_service(void)
             time_end = amp_millis();
 
             time_spent_ms = (t_svm_begin - t_svm_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
-            lat_svm_ms += time_spent_ms; 
+            lat_svm_ms += time_spent_ms;
 
             time_spent_ms = (time_begin - time_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
             throughput_ms += time_spent_ms;
@@ -185,7 +185,38 @@ static void console_service(void)
             send_ms += time_spent_ms;
         }
 
+        // Waits for the last package of the private data
+        time_begin = amp_millis(); 
+        do
+        {
+            cmd_rx = amp_comms_has_unread(&_rx);
+        } while (cmd_rx == AMP_NULL);
+
+        if(cmd_rx != AMP_NULL)
+        {
+            switch (cmd_rx)
+            {
+            case AMP_SEND_AES_PRIV_DATA:
+                t_receive_begin = amp_millis();
+                amp_comms_receive(&_rx, (uint8_t * ) &private_aes, sizeof(private_aes));
+                t_receive_end = amp_millis();
+
+                time_spent_ms = (t_receive_begin - t_receive_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+                receive_ms += time_spent_ms;
+                break;
+            
+            default:
+                /* Blocking program, command not implemented */
+                while(1);
+                break;
+            }
+        }
+        time_end = amp_millis();
+        time_spent_ms = (time_begin - time_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+        throughput_ms += time_spent_ms;
+
         printf("\n");
+
 
         /* Allowing printf to display float will increase code size, so the parts of the float number are being extracted belw */
         time_spent_ms = lat_svm_ms/MEASURE_STEPS;
