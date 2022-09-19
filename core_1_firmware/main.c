@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "aes.h"
+#include "amp_comms.h"
 #include "amp_utils.h"
 
 #include <irq.h>
@@ -92,8 +93,6 @@ static void help(void)
     puts("Available commands:");
     puts("help               - Show this command");
     puts("reboot             - Reboot CPU");
-    puts("enc              - Synchronized Encryption");
-    puts("dec              - Decryption function test");
 }
 
 /*-----------------------------------------------------------------------*/
@@ -144,12 +143,15 @@ int main(void)
 
     prompt();
 
-    const int MEASURE_STEPS = 50;
-    uint32_t t_aes_begin, t_aes_end, counter;
-    double lat_aes_ms;
+    const int MEASURE_STEPS = 100;
+    uint32_t t_aes_begin, t_aes_end, counter, t_send_begin,  t_send_end, t_receive_begin, t_receive_end;
+    double lat_aes_ms = 0;
+    double t_send_ms = 0;
+    double t_receive_ms = 0;
     float time_spent_ms;
     amp_cmds_t cmd_rx;
-    uint8_t class_predicted;
+    int img_size;
+    uint8_t sel_op, class_predicted;
 
     counter = 0;
 
@@ -169,12 +171,18 @@ int main(void)
             switch (cmd_rx)
             {
             case AMP_SEND_PREDICTION:
+                t_receive_begin = amp_millis();
                 amp_comms_receive(&_rx, &class_predicted, sizeof(class_predicted));
+                t_receive_end = amp_millis();
+
+                time_spent_ms = (t_receive_begin - t_receive_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+                t_receive_ms += time_spent_ms;
                 break;
             
             default:
-                /* Clearing received commands, not implemented */
-                amp_comms_receive(&_rx, NULL, 0);
+                /* Blocking program, command not implemented */
+                while(1);
+                sel_op = 0;
                 break;
             }
 
@@ -191,7 +199,12 @@ int main(void)
             time_spent_ms = (t_aes_begin - t_aes_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
             lat_aes_ms += time_spent_ms;
 
+            t_send_begin = amp_millis();
             amp_comms_send(&_tx, AMP_SEND_AES_PRIV_DATA, (uint8_t *) &private_aes, sizeof(private_aes));
+            t_send_end = amp_millis();
+
+            time_spent_ms = (t_send_begin - t_send_end)/(CONFIG_CLOCK_FREQUENCY/1000.0);
+            t_send_ms += time_spent_ms;
 
             counter++;
 
@@ -204,11 +217,25 @@ int main(void)
         if(counter == MEASURE_STEPS)
         {
             counter = 0;
+
             time_spent_ms = lat_aes_ms/MEASURE_STEPS;
             int f_left = (int)time_spent_ms;
             int f_right = ((float)(time_spent_ms - f_left)*1000.0);
             printf("\nAES Latency for predicted class: %d is %d.%d ms\n", class_predicted, f_left, f_right);
-            time_spent_ms = 0;
+
+            time_spent_ms = t_send_ms/MEASURE_STEPS;
+            f_left = (int)time_spent_ms;
+            f_right = ((float)(time_spent_ms - f_left)*1000.0);
+            printf("Total Communication send is %d.%d ms\n", f_left, f_right);
+
+            time_spent_ms = t_receive_ms/MEASURE_STEPS;
+            f_left = (int)time_spent_ms;
+            f_right = ((float)(time_spent_ms - f_left)*1000.0);
+            printf("Total Communication receive is %d.%d ms\n", f_left, f_right);
+
+            t_receive_ms = 0;
+            t_send_ms = 0;
+            lat_aes_ms = 0;
             prompt();
         }
     }
