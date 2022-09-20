@@ -83,3 +83,6 @@
 [submodule "ext_libs/amp_lib"]
 	path = ext_libs/amp_lib
 	url = git@github.com:ridope/amp_lib.git
+[submodule "ext_libs/tinycrypt"]
+	path = ext_libs/tinycrypt
+	url = git@github.com:intel/tinycrypt.git
