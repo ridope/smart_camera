@@ -1,7 +1,6 @@
 
 # Asymetric-Multi-Processing
 
-### External Library - MbedTLS 
 
 - Building
 
