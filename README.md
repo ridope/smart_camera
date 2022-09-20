@@ -5,9 +5,12 @@
 
 - Building
 
-  1. Copy mbedtls_config.h file to ext_lib/include/mbedtls directory.
+  1. Choose the desired configuration 
+  2. Enter the command
+      
+      `./build_platform.py --load --config_file=<config_file_path> --bus_data_width=<bus_width> --config=<config_name> --build_dir=<build_dir>`
 
-  2. Run the command 
+  2. Then, to build the firmware, enter the command 
 
-      `CC=riscv64-unknown-elf-gcc CFLAGS='-std=gnu99 -Wall -Wextra -march=rv32im -mabi=ilp32 -D__vexriscv__ -MMD' make lib`
+      `./build_firmwares.py --config_file=<config_file_path> --config=<config_name> --build_dir=<build_dir> --make_clean`
 
