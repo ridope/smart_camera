@@ -80,3 +80,6 @@
 [submodule "litex-inst/valentyusb"]
 	path = litex-inst/valentyusb
 	url = https://github.com/litex-hub/valentyusb.git
+[submodule "ext_libs/amp_lib"]
+	path = ext_libs/amp_lib
+	url = git@github.com:ridope/amp_lib.git
