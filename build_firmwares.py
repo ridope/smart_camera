@@ -32,7 +32,6 @@ def main():
     parser.add_argument("--config",         default='config_1',     help='configuration to choose.')
     parser.add_argument("--build_dir",      default='',             help="Base output dir.")
     parser.add_argument('--make_clean',     action="store_true",    help="Make clean command to firmware folders.")
-    parser.add_argument('--make_clean_lib', action="store_true",    help="Make clean command to Mbdedtls library folders.")
     parser.add_argument("--with-cxx",       action="store_true",    help="Enable CXX support.")
     args = parser.parse_args()
 
@@ -47,16 +46,6 @@ def main():
     args.config_file = os.path.join(cwd, args.config_file)
     configuration = extract_config(args.config_file, args.config)
    
-    if args.make_clean_lib:
-        os.system(f"cp mbedtls_config.h ext_libs/mbedtls/include/mbedtls")
-        os.chdir(os.path.join(os.path.join(cwd, 'ext_libs', 'mbedtls')))
-        print("MAKE_AND_BUILD_INFO : Move in {}".format(os.getcwd()))
-
-        os.system("CC=riscv64-unknown-elf-gcc CFLAGS='-std=gnu99 -Wall -Os -Wextra -march=rv32im -mabi=ilp32 "
-                    "-D__vexriscv__ -MMD' make clean")
-
-        os.system("CC=riscv64-unknown-elf-gcc CFLAGS='-std=gnu99 -Wall -Os -Wextra -march=rv32im -mabi=ilp32 "
-                    "-D__vexriscv__ -MMD' make lib")
     os.chdir(cwd)
 
     # Check argument validity
