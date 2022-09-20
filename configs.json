@@ -1,0 +1,201 @@
+{
+    "config_1": {
+      "core_1": {
+        "name": "femtorv",
+        "sram_s": "0x10000",
+        "ram_s": "0x0",
+        "rom_s": "0x8000",
+        "sp_s": "0x1000",
+        "app": "core_0_firmware"
+        },
+      "core_2": {
+        "name": "firev",
+        "sram_s": "0x8000",
+        "ram_s": "0x2000",
+        "rom_s": "0x8000",
+        "sp_s": "0x100",
+        "app": "core_1_firmware"
+        },
+      "shared_ram": "0x200"
+    },
+
+    "config_2": {
+      "core_1": {
+        "name": "femtorv",
+        "sram_s": "0x10000",
+        "ram_s": "0x0",
+        "rom_s": "0x8000",
+        "sp_s": "0x100",
+        "app": "core_0_firmware"
+        },
+      "core_2": {
+        "name": "firev",
+        "sram_s": "0x8000",
+        "ram_s": "0x2000",
+        "rom_s": "0x8000",
+        "sp_s": "0x1000",
+        "app": "core_1_firmware"
+        },
+      "shared_ram": "0x200"
+    },
+
+    "config_3": {
+      "core_1": {
+        "name": "femtorv",
+        "sram_s": "0x10000",
+        "ram_s": "0x0",
+        "rom_s": "0x8000",
+        "sp_s": "0x1000",
+        "app": "core_0_firmware"
+        },
+      "core_2": {
+        "name": "firev",
+        "sram_s": "0x8000",
+        "ram_s": "0x2000",
+        "rom_s": "0x8000",
+        "sp_s": "0x0",
+        "app": "core_1_firmware"
+        },
+      "shared_ram": "0x200"
+    },
+
+    "config_4": {
+      "core_1": {
+        "name": "femtorv",
+        "sram_s": "0x8000",
+        "ram_s": "0x2000",
+        "rom_s": "0x8000",
+        "sp_s": "0x1000",
+        "app": "core_1_firmware"
+        },
+      "core_2": {
+        "name": "firev",
+        "sram_s": "0x10000",
+        "ram_s": "0x0",
+        "rom_s": "0x8000",
+        "sp_s": "0x100",
+        "app": "core_0_firmware"
+        },
+      "shared_ram": "0x200"
+    },
+
+    "config_5": {
+      "core_1": {
+        "name": "femtorv",
+        "sram_s": "0x8000",
+        "ram_s": "0x2000",
+        "rom_s": "0x8000",
+        "sp_s": "0x1000",
+        "app": "core_1_firmware"
+        },
+      "core_2": {
+        "name": "firev",
+        "sram_s": "0x10000",
+        "ram_s": "0x0",
+        "rom_s": "0x8000",
+        "sp_s": "0x0",
+        "app": "core_0_firmware"
+        },
+      "shared_ram": "0x200"
+    },
+
+    "config_6": {
+      "core_1": {
+        "name": "femtorv",
+        "sram_s": "0x8000",
+        "ram_s": "0x2000",
+        "rom_s": "0x8000",
+        "sp_s": "0x0",
+        "app": "core_1_firmware"
+        },
+      "core_2": {
+        "name": "firev",
+        "sram_s": "0x10000",
+        "ram_s": "0x0",
+        "rom_s": "0x8000",
+        "sp_s": "0x1000",
+        "app": "core_0_firmware"
+        },
+      "shared_ram": "0x200"
+    },
+
+    "config_7": {
+      "core_1": {
+        "name": "femtorv",
+        "sram_s": "0x10000",
+        "ram_s": "0x0",
+        "rom_s": "0x8000",
+        "sp_s": "0x0",
+        "app": "core_0_firmware"
+        },
+      "core_2": {
+        "name": "firev",
+        "sram_s": "0x8000",
+        "ram_s": "0x2000",    
+        "rom_s": "0x8000",
+        "sp_s": "0x1000",
+        "app": "core_1_firmware"
+        },
+      "shared_ram": "0x200"
+    },
+
+    "config_8": {
+      "core_1": {
+        "name": "femtorv",
+        "sram_s": "0x8000",
+        "ram_s": "0x2000",
+        "rom_s": "0x8000",
+        "sp_s": "0x100",
+        "app": "core_1_firmware"
+        },
+      "core_2": {
+        "name": "firev",
+        "sram_s": "0x10000",
+        "ram_s": "0x0",
+        "rom_s": "0x8000",
+        "sp_s": "0x1000",
+        "app": "core_0_firmware"
+        },
+      "shared_ram": "0x200"
+    },
+
+    "baseline_1": {
+      "core_1": {
+        "name": "femtorv",
+        "sram_s": "0x8000",
+        "ram_s": "0x2000",
+        "rom_s": "0x8000",
+        "sp_s": "0x0",
+        "app": "core_1_firmware"
+        },
+      "core_2": {
+        "name": "firev",
+        "sram_s": "0x10000",
+        "ram_s": "0",
+        "rom_s": "0x8000",
+        "sp_s": "0x0",
+        "app": "core_0_firmware"
+        },
+      "shared_ram": "0x1000"
+    },
+
+    "baseline_2": {
+      "core_1": {
+        "name": "femtorv",
+        "sram_s": "0x10000",
+        "ram_s": "0x0",
+        "rom_s": "0x8000",
+        "sp_s": "0x0",
+        "app": "core_0_firmware"
+        },
+      "core_2": {
+        "name": "firev",
+        "sram_s": "0x8000",
+        "ram_s": "0x2000",
+        "rom_s": "0x8000",
+        "sp_s": "0x0",
+        "app": "core_1_firmware"
+        },
+      "shared_ram": "0x1000"
+    }
+}
