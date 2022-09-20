@@ -5,26 +5,47 @@
 """
    Script to build bare metal apps.
 """
+import json
 import os
 import shutil
 import argparse
 
 _VALID_CORE_NAME = {'firev', 'femtorv'}
+def extract_config(config_file, config):
+    configuration = {}
+    print(config_file)
+    assert os.path.exists(config_file)
+    with open(config_file, 'r') as f:
+        data = json.load(f)
+    print(data)
+    config_dict = data[config]
+    #print(config_dict)
+    configuration["name_1"]          = config_dict.get('core_1').get("name")
+    configuration["name_2"]          = config_dict.get('core_2').get("name")
+    configuration['firm_1']     = config_dict.get("core_1").get("app")
+    configuration['firm_2']     = config_dict.get("core_2").get("app")
+    return configuration
 
 def main():
     parser = argparse.ArgumentParser(description="LiteX Bare Metal AES App on AMP Architecture.")
-    parser.add_argument("--core_0",         type=str,            help="Core 0 name.",               required=True)
-    parser.add_argument("--core_1",         type=str,            help="Core 1 name",                required=True)
-    parser.add_argument("--firmware_0",     type=str,            help="Firmware dir 0",             required=True)
-    parser.add_argument("--firmware_1",     type=str,            help="Firmware dir 1",             required=True)
-    parser.add_argument("--build_dir",      type=str,            help="Build the target platform.", required=True)
-    parser.add_argument('--make_clean',     action="store_true", help="Make clean command to firmware folders.")
-    parser.add_argument('--make_clean_lib', action="store_true", help="Make clean command to Mbdedtls library folders.")
-    parser.add_argument("--with-cxx",       action="store_true", help="Enable CXX support.")
+    parser.add_argument("--config_file",    default='configs.json', help="config file path.")
+    parser.add_argument("--config",         default='config_1',     help='configuration to choose.')
+    parser.add_argument("--build_dir",      default='',             help="Base output dir.")
+    parser.add_argument('--make_clean',     action="store_true",    help="Make clean command to firmware folders.")
+    parser.add_argument('--make_clean_lib', action="store_true",    help="Make clean command to Mbdedtls library folders.")
+    parser.add_argument("--with-cxx",       action="store_true",    help="Enable CXX support.")
     args = parser.parse_args()
 
     cwd = os.getcwd()
     print("MAKE_AND_BUILD_INFO : Program working directory : {}".format(cwd))
+
+    if not args.build_dir:
+        args.build_dir = os.path.join(cwd, 'build')
+    else:
+        args.build_dir = os.path.join(cwd, args.build_dir)
+
+    args.config_file = os.path.join(cwd, args.config_file)
+    configuration = extract_config(args.config_file, args.config)
    
     if args.make_clean_lib:
         os.system(f"cp mbedtls_config.h ext_libs/mbedtls/include/mbedtls")
@@ -40,41 +61,51 @@ def main():
 
     # Check argument validity
 
-    assert args.core_0 in _VALID_CORE_NAME
-    assert args.core_1 in _VALID_CORE_NAME
+    assert configuration['name_1'] in _VALID_CORE_NAME
+    assert configuration['name_2'] in _VALID_CORE_NAME
 
     # Set 'archi' variable
-    if args.core_0 != args.core_1:
+    if configuration['name_1'] != configuration['name_2']:
         archi = "Heterogen"
     else:
         archi = "Homogen"
 
     # Set firmware directories
+    if args.config == 'config_1' or args.config == 'config_8':
+        firm_dir = os.path.join(cwd, 'firmwares', 'config_1_8')
+    elif args.config == 'config_2' or args.config == 'config_6':
+        firm_dir = os.path.join(cwd, 'firmwares', 'config_2_6')
+    elif args.config == 'config_3' or args.config == 'config_4':
+        firm_dir = os.path.join(cwd, 'firmwares', 'config_3_4')
+    elif args.config == 'config_5' or args.config == 'config_7':
+        firm_dir = os.path.join(cwd, 'firmwares', 'config_5_7')
+    elif args.config == 'baseline_1' or args.config == 'baseline_2':
+        firm_dir = os.path.join(cwd, 'firmwares', 'baseline_1_2')
+    else:
+        firm_dir = os.path.join(cwd, 'firmwares', 'dummy')
 
-    firm0 = args.firmware_0
-    os.makedirs(firm0, exist_ok=True)
-    firm1 = args.firmware_1
-    os.makedirs(firm1, exist_ok=True)
+    firm0 = configuration['firm_1']
+    firm1 = configuration['firm_2']
 
     # Set content for crt0.d file
-    os.chdir(os.path.join(cwd, firm0))
+    os.chdir(os.path.join(firm_dir, firm0))
 
     with open("crt0.d", 'w', encoding='utf-8') as f:
-        f.write("crt0.o: /opt/litex_root/litex/litex/soc/cores/cpu/{}/crt0.S".format(args.core_0))
+        f.write("crt0.o: /opt/litex_root/litex/litex/soc/cores/cpu/{}/crt0.S".format(configuration['name_1']))
 
-    os.chdir(os.path.join(cwd, firm1))
+    os.chdir(os.path.join(firm_dir, firm1))
     with open("crt0.d", 'w', encoding='utf-8') as f:
-        f.write("crt0.o: /opt/litex_root/litex/litex/soc/cores/cpu/{}/crt0.S".format(args.core_1))
+        f.write("crt0.o: /opt/litex_root/litex/litex/soc/cores/cpu/{}/crt0.S".format(configuration['name_2']))
 
     # Set build path
 
     if archi == "Heterogen":
-        core_0_build_path = os.path.join(cwd, args.build_dir, "{}_soc".format(args.core_0))
-        core_1_build_path = os.path.join(cwd, args.build_dir, "{}_soc".format(args.core_1))
+        core_0_build_path = os.path.join(cwd, args.build_dir, "{}_soc".format(configuration['name_1']))
+        core_1_build_path = os.path.join(cwd, args.build_dir, "{}_soc".format(configuration['name_2']))
 
     else:
-        core_0_build_path = os.path.join(cwd, args.build_dir, "{}_soc_0".format(args.core_0))
-        core_1_build_path = os.path.join(cwd, args.build_dir, "{}_soc_1".format(args.core_1))
+        core_0_build_path = os.path.join(cwd, args.build_dir, "{}_soc_0".format(configuration['name_1']))
+        core_1_build_path = os.path.join(cwd, args.build_dir, "{}_soc_1".format(configuration['name_2']))
 
     for build_path, firmware in zip([core_0_build_path, core_1_build_path], [firm0, firm1]):
         print("*******************************************************************************************************")
@@ -82,7 +113,7 @@ def main():
         # Compile firmware
         build_path = build_path if os.path.isabs(build_path) else os.path.join("..", build_path)
         print("MAKE_AND_BUILD_INFO : Build path {}".format(build_path))
-        os.chdir(os.path.join(cwd, f"{firmware}"))
+        os.chdir(os.path.join(firm_dir, f"{firmware}"))
         print(os.getcwd())
         if args.make_clean:
             os.system(f"export BUILD_DIR={build_path} && {'export WITH_CXX=1 &&' if args.with_cxx else ''} "

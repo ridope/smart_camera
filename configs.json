@@ -5,14 +5,16 @@
         "sram_s": "0x10000",
         "ram_s": "0x0",
         "rom_s": "0x8000",
-        "sp_s": "0x1000"
+        "sp_s": "0x1000",
+        "app": "core_0_firmware"
         },
       "core_2": {
         "name": "firev",
         "sram_s": "0x8000",
         "ram_s": "0x2000",
         "rom_s": "0x8000",
-        "sp_s": "0x100"
+        "sp_s": "0x100",
+        "app": "core_1_firmware"
         },
       "shared_ram": "0x200"
     },
@@ -23,14 +25,16 @@
         "sram_s": "0x10000",
         "ram_s": "0x0",
         "rom_s": "0x8000",
-        "sp_s": "0x100"
+        "sp_s": "0x100",
+        "app": "core_0_firmware"
         },
       "core_2": {
         "name": "firev",
         "sram_s": "0x8000",
         "ram_s": "0x2000",
         "rom_s": "0x8000",
-        "sp_s": "0x1000"
+        "sp_s": "0x1000",
+        "app": "core_1_firmware"
         },
       "shared_ram": "0x200"
     },
@@ -41,14 +45,16 @@
         "sram_s": "0x10000",
         "ram_s": "0x0",
         "rom_s": "0x8000",
-        "sp_s": "0x1000"
+        "sp_s": "0x1000",
+        "app": "core_0_firmware"
         },
       "core_2": {
         "name": "firev",
         "sram_s": "0x8000",
         "ram_s": "0x2000",
         "rom_s": "0x8000",
-        "sp_s": "0x0"
+        "sp_s": "0x0",
+        "app": "core_1_firmware"
         },
       "shared_ram": "0x200"
     },
@@ -59,14 +65,16 @@
         "sram_s": "0x8000",
         "ram_s": "0x2000",
         "rom_s": "0x8000",
-        "sp_s": "0x1000"
+        "sp_s": "0x1000",
+        "app": "core_1_firmware"
         },
       "core_2": {
         "name": "firev",
         "sram_s": "0x10000",
         "ram_s": "0x0",
         "rom_s": "0x8000",
-        "sp_s": "0x100"
+        "sp_s": "0x100",
+        "app": "core_0_firmware"
         },
       "shared_ram": "0x200"
     },
@@ -77,14 +85,16 @@
         "sram_s": "0x8000",
         "ram_s": "0x2000",
         "rom_s": "0x8000",
-        "sp_s": "0x1000"
+        "sp_s": "0x1000",
+        "app": "core_1_firmware"
         },
       "core_2": {
         "name": "firev",
         "sram_s": "0x10000",
         "ram_s": "0x0",
         "rom_s": "0x8000",
-        "sp_s": "0x0"
+        "sp_s": "0x0",
+        "app": "core_0_firmware"
         },
       "shared_ram": "0x200"
     },
@@ -95,14 +105,16 @@
         "sram_s": "0x8000",
         "ram_s": "0x2000",
         "rom_s": "0x8000",
-        "sp_s": "0x0"
+        "sp_s": "0x0",
+        "app": "core_1_firmware"
         },
       "core_2": {
         "name": "firev",
         "sram_s": "0x10000",
         "ram_s": "0x0",
         "rom_s": "0x8000",
-        "sp_s": "0x1000"
+        "sp_s": "0x1000",
+        "app": "core_0_firmware"
         },
       "shared_ram": "0x200"
     },
@@ -113,14 +125,16 @@
         "sram_s": "0x10000",
         "ram_s": "0x0",
         "rom_s": "0x8000",
-        "sp_s": "0x0"
+        "sp_s": "0x0",
+        "app": "core_0_firmware"
         },
       "core_2": {
         "name": "firev",
         "sram_s": "0x8000",
         "ram_s": "0x2000",    
         "rom_s": "0x8000",
-        "sp_s": "0x1000"
+        "sp_s": "0x1000",
+        "app": "core_1_firmware"
         },
       "shared_ram": "0x200"
     },
@@ -131,14 +145,16 @@
         "sram_s": "0x8000",
         "ram_s": "0x2000",
         "rom_s": "0x8000",
-        "sp_s": "0x100"
+        "sp_s": "0x100",
+        "app": "core_1_firmware"
         },
       "core_2": {
         "name": "firev",
         "sram_s": "0x10000",
         "ram_s": "0x0",
         "rom_s": "0x8000",
-        "sp_s": "0x1000"
+        "sp_s": "0x1000",
+        "app": "core_0_firmware"
         },
       "shared_ram": "0x200"
     },
@@ -149,14 +165,16 @@
         "sram_s": "0x8000",
         "ram_s": "0x2000",
         "rom_s": "0x8000",
-        "sp_s": "0x0"
+        "sp_s": "0x0",
+        "app": "core_1_firmware"
         },
       "core_2": {
         "name": "firev",
         "sram_s": "0x10000",
         "ram_s": "0",
         "rom_s": "0x8000",
-        "sp_s": "0x0"
+        "sp_s": "0x0",
+        "app": "core_0_firmware"
         },
       "shared_ram": "0x1000"
     },
@@ -167,14 +185,16 @@
         "sram_s": "0x10000",
         "ram_s": "0x0",
         "rom_s": "0x8000",
-        "sp_s": "0x0"
+        "sp_s": "0x0",
+        "app": "core_0_firmware"
         },
       "core_2": {
         "name": "firev",
         "sram_s": "0x8000",
         "ram_s": "0x2000",
         "rom_s": "0x8000",
-        "sp_s": "0x0"
+        "sp_s": "0x0",
+        "app": "core_1_firmware"
         },
       "shared_ram": "0x1000"
     }

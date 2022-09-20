@@ -4,7 +4,7 @@ include $(BUILD_DIR)/software/include/generated/variables.mak
 include $(SOC_DIRECTORY)/software/common.mak
 
 OBJDIR = ./obj
-EXT_LIBDIR = ../ext_libs
+EXT_LIBDIR = ../../../ext_libs
 
 AMP_LIB_OBJ := $(OBJDIR)/amp_utils.o \
 			$(OBJDIR)/amp_comms.o
