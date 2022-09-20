@@ -1,5 +1,7 @@
 #Project build folder
 target/build/*
+build
+.idea
 
 #Litex folder
 litex-inst/*
