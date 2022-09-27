@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (c) 2022 Joseph FAYE <joseph-wagane.faye@insa-rennes.fr>
+# Modified 2022 by lesteves <lesteves@insa-rennes.fr>
 # SPDX-License-Identifier: BSD-2-Clause
 """
    Script to build bare metal apps.
@@ -60,16 +61,8 @@ def main():
         archi = "Homogen"
 
     # Set firmware directories
-    if args.config == 'config_1' or args.config == 'config_8':
-        firm_dir = os.path.join(cwd, 'firmwares', 'config_1_8')
-    elif args.config == 'config_2' or args.config == 'config_6':
-        firm_dir = os.path.join(cwd, 'firmwares', 'config_2_6')
-    elif args.config == 'config_3' or args.config == 'config_4':
-        firm_dir = os.path.join(cwd, 'firmwares', 'config_3_4')
-    elif args.config == 'config_5' or args.config == 'config_7':
-        firm_dir = os.path.join(cwd, 'firmwares', 'config_5_7')
-    elif args.config == 'baseline_1' or args.config == 'baseline_2':
-        firm_dir = os.path.join(cwd, 'firmwares', 'baseline_1_2')
+    if args.config == 'smart_camera':
+        firm_dir = os.path.join(cwd, 'firmwares', 'smart_camera')
     else:
         firm_dir = os.path.join(cwd, 'firmwares', 'dummy')
 

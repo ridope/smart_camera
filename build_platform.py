@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 #
 # Copyright (c) 2022 Joseph FAYE <joseph-wagane.faye@insa-rennes.fr>
+# Modified 2022 by lesteves <lesteves@insa-rennes.fr>
 # SPDX-License-Identifier: BSD-2-Clause
 """
-   Script to build Anisotropic platform
+   Script to build Smart Camera platform
 """
 import os
 import shutil
@@ -41,52 +42,52 @@ def main():
                 print("MAKE_AND_BUILD_INFO : Build already exists and will be deleted.")
                 time.sleep(5)
                 shutil.rmtree(args.build_dir)
-            os.chdir(os.path.join(cwd, soc_path))
+
             if args.mux:
-                os.system(f"./amp.py --config_file {config_file} --config {args.config} "
+                os.system(f"./smart_camera_soc.py --config_file {config_file} --config {args.config} "
                           f"--bus_data_width {args.bus_data_width} "
                           f"--mux {args.mux} --build_dir {args.build_dir} --build ")
             else:
-                os.system(f"./amp.py --config_file {config_file} --config {args.config} "
+                os.system(f"./smart_camera_soc.py --config_file {config_file} --config {args.config} "
                           f"--bus_data_width {args.bus_data_width} "
                           f"--build_dir {args.build_dir} --build ")
-            os.chdir(cwd)
+
         else:
             if os.path.isdir(args.build_dir):
-                os.chdir(os.path.join(cwd, soc_path))
+
                 if args.mux:
-                    os.system(f"./amp.py --config_file {config_file} --config {args.config} "
+                    os.system(f"./smart_camera_soc.py --config_file {config_file} --config {args.config} "
                               f"--bus_data_width {args.bus_data_width} "
                               f"--mux {args.mux} --build_dir {args.build_dir} --build ")
                 else:
-                    os.system(f"./amp.py --config_file {config_file} --config {args.config} "
+                    os.system(f"./smart_camera_soc.py --config_file {config_file} --config {args.config} "
                               f"--bus_data_width {args.bus_data_width} "
                               f"--build_dir {args.build_dir} --build ")
-                os.chdir(cwd)
+
             else:
                 os.mkdir(args.build_dir)
-                os.chdir(os.path.join(cwd, soc_path))
+
                 if args.mux:
-                    os.system(f"./amp.py --config_file {config_file} --config {args.config} "
+                    os.system(f"./smart_camera_soc.py --config_file {config_file} --config {args.config} "
                               f"--bus_data_width {args.bus_data_width} "
                               f"--mux {args.mux} --build_dir {args.build_dir} --build ")
                 else:
-                    os.system(f"./amp.py --config_file {config_file} --config {args.config} "
+                    os.system(f"./smart_camera_soc.py --config_file {config_file} --config {args.config} "
                               f"--bus_data_width {args.bus_data_width} "
                               f"--build_dir {args.build_dir} --build ")
-                os.chdir(cwd)
+
 
     # Load Platform
     if args.load:
         print("We're loading baby !")
         time.sleep(5)
-        os.chdir(os.path.join(cwd, soc_path))
+
         if args.mux:
-            os.system(f"./amp.py --config_file {config_file} --config {args.config} "
+            os.system(f"./smart_camera_soc.py --config_file {config_file} --config {args.config} "
                       f"--bus_data_width {args.bus_data_width} "
                       f"--mux {args.mux} --build_dir {args.build_dir} --load ")
         else:
-            os.system(f"./amp.py --config_file {config_file} --config {args.config} "
+            os.system(f"./smart_camera_soc.py --config_file {config_file} --config {args.config} "
                       f"--bus_data_width {args.bus_data_width} "
                       f"--build_dir {args.build_dir} --load ")
         os.chdir(cwd)

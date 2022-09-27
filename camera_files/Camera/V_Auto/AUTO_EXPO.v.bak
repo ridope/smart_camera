@@ -1,0 +1,64 @@
+module AUTO_EXPO  (
+    input           CLK, 
+    input			RST_N,
+    input           PIXEL_VALID,
+    input	[7:0]   PIXEL_IN,
+    input           FRAME_NEW,
+    output  [23:0]  EXPO_OUT
+) ; 
+
+reg [15:0] SUM;
+wire [23:0] AVG;
+
+parameter Y_FIXED   = 256; 
+parameter F_TARGET  = 128; 
+parameter EXPO_MAX  = 24'hFFFFFF; 
+parameter IMG_SIZE  = 1024;
+
+parameter STEP_BAD = 2000;
+parameter STEP_GOOD = 1000;
+parameter STEP_BEST = 500;
+
+parameter THRESH_BAD = 127
+
+assign AVG = SUM/IMG_SIZE;
+
+always @( posedge CLK  ) begin 
+
+    if (!RST_N) begin 
+        EXPO_OUT <= 24'h11264;
+        SUM <= 0;
+    end
+    else begin
+        if(FRAME_NEW == 1'b1) begin
+            if(AVG > F_TARGET) begin
+                if ((AVG-F_TARGET) >= 64) begin
+                    EXPO_OUT <= EXPO_OUT - STEP_BAD;
+                end else if (((AVG-F_TARGET) >= 32)) begin
+                    EXPO_OUT <= EXPO_OUT - STEP_GOOD;
+                end if (((AVG-F_TARGET) >= 16)) begin
+                    EXPO_OUT <= EXPO_OUT - STEP_BEST;
+                end                
+            end
+            else begin
+                if ((F_TARGET-AVG) >= 64) begin
+                    EXPO_OUT <= EXPO_OUT + STEP_BAD;
+                end else if ((AVG-F_TARGET) >= 32) begin
+                    EXPO_OUT <= EXPO_OUT + STEP_GOOD;
+                end if ((AVG-F_TARGET) >= 16) begin
+                    EXPO_OUT <= EXPO_OUT + STEP_BEST;
+                end        
+            end
+            SUM <= 0;
+        end 
+        else begin
+            if(PIXEL_VALID == 1'b1) begin
+                SUM <= SUM + {8'h0,PIXEL_IN};
+            end
+        end
+
+    end 
+
+end
+
+endmodule
