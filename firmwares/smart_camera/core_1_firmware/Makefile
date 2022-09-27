@@ -19,6 +19,7 @@ OBJECTS := $(TINY_CRYPT_OBJ) \
 		  $(AMP_LIB_OBJ) \
 		  $(OBJDIR)/aes.o \
 		  $(OBJDIR)/main.o \
+		  $(OBJDIR)/comm_ridope.o \
 		  $(OBJDIR)/crt0.o
 
 INCLUDES += -I$(EXT_LIBDIR)/tinycrypt \

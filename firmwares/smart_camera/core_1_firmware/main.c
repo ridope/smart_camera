@@ -10,6 +10,7 @@
 #include "aes.h"
 #include "amp_comms.h"
 #include "amp_utils.h"
+#include "comm_ridope.h"
 
 #include <irq.h>
 #include <libbase/uart.h>
@@ -85,6 +86,26 @@ static void prompt(void)
     printf("\e[92;1mCore1-console\e[0m> ");
 }
 
+static void get_img(uint8_t *img){
+
+	COMM_RIDOPE_MSG_t msg;
+	msg.msg_data.cmd = CAMERA_EXPO;
+	msg.msg_data.data = 11264; 
+
+	comm_ridope_send_cmd(&msg);
+
+	msg.msg_data.cmd = CAMERA_AVG;
+	msg.msg_data.data = 50; 
+	comm_ridope_send_cmd(&msg);
+	
+	printf("Sending img!\n");
+
+	comm_ridope_send_img(img,TRANS_PHOTO, IMG_WIDTH, IMG_HEIGTH);
+	printf("Done sending!\n");
+
+	
+}
+
 /*-----------------------------------------------------------------------*/
 /* Help                                                                  */
 /*-----------------------------------------------------------------------*/
@@ -95,6 +116,8 @@ static void help(void)
     puts("Available commands:");
     puts("help               - Show this command");
     puts("reboot             - Reboot CPU");
+    printf("Image ptr: %p\n", &img[0]);
+    printf("Float image ptr: %p\n", &f_img[0]);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -157,8 +180,18 @@ int main(void)
 
     counter = 0;
 
+    COMM_RIDOPE_MSG_t rx_msg;
+
     while(1) {
-        console_service();
+        comm_ridope_receive_cmd(&rx_msg);
+
+        if(rx_msg.msg_data.cmd == CAMERA_TRIG)
+		{	
+			get_img(&img[0]);
+		}else if(rx_msg.msg_data.cmd == REBOOT)
+		{
+			reboot_cmd();
+		}
 
         /* Checking comunication data */
         cmd_rx = amp_comms_has_unread(&_rx);
