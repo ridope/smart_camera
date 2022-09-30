@@ -1,15 +1,15 @@
 {
     "smart_camera": {
       "core_1": {
-        "name": "femtorv",
+        "name": "firev",
         "sram_s": "0x8000",
-        "ram_s": "0x2000",
+        "ram_s": "0x1000",
         "rom_s": "0x8000",
-        "sp_s": "0x0",
+        "sp_s": "0x400",
         "app": "core_1_firmware"
         },
       "core_2": {
-        "name": "firev",
+        "name": "femtorv",
         "sram_s": "0x10000",
         "ram_s": "0",
         "rom_s": "0x8000",

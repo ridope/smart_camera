@@ -20,6 +20,7 @@ OBJECTS := $(TINY_CRYPT_OBJ) \
 		  $(OBJDIR)/aes.o \
 		  $(OBJDIR)/main.o \
 		  $(OBJDIR)/comm_ridope.o \
+		  $(OBJDIR)/ridope_sp.o \
 		  $(OBJDIR)/crt0.o
 
 INCLUDES += -I$(EXT_LIBDIR)/tinycrypt \
@@ -32,10 +33,16 @@ ifdef WITH_CXX
 endif
 
 
-all: sram.bin shared.bin
+all: sram.bin shared.bin sp.bin
 
 sram.bin: demo.elf
-	$(OBJCOPY) -R .shared_ram -O binary $< $@
+	$(OBJCOPY) -R .shared_ram -R .private_ram -O binary $< $@
+ifneq ($(OS),Windows_NT)
+	chmod -x $@
+endif
+
+sp.bin: demo.elf
+	$(OBJCOPY) -j .private_ram -O binary $< $@
 ifneq ($(OS),Windows_NT)
 	chmod -x $@
 endif

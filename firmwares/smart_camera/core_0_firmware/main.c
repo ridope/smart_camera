@@ -16,8 +16,7 @@
 #include <libbase/console.h>
 #include <generated/csr.h>
 
-float f_img[IMG_WIDTH*IMG_HEIGTH ]  __attribute__ ((section ("img_float")));
-uint8_t img[IMG_WIDTH*IMG_HEIGTH] __attribute__ ((section ("img_char")));
+source_data_t source_data  __attribute__ ((section ("img_float")));
 amp_comms_tx_t _tx __attribute__ ((section ("shared_ram_first")));
 amp_comms_rx_t _rx __attribute__ ((section ("shared_ram_second")));
 
@@ -95,6 +94,9 @@ static void help(void)
     puts("help               - Show this command");
     puts("reboot             - Reboot CPU");
     puts("enc                - Synchronized encryption");
+    printf("Float image ptr: %p\n", &source_data.f_img[0]);
+    printf("TX ptr: %p\n", &_tx);
+    printf("RX ptr: %p\n", &_rx);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -123,7 +125,7 @@ static void console_service(void)
         reboot_cmd();
     else if(strcmp(token, "enc") == 0){
 
-        const int MEASURE_STEPS = 100;
+        const int MEASURE_STEPS = 102;
         double throughput_ms = 0;
         double lat_svm_ms = 0;
         double send_ms = 0;
@@ -139,9 +141,14 @@ static void console_service(void)
             
             time_begin = amp_millis();
 
+            // Waits for the new float image to be written
+            while(source_data.flag_received);
+            
             t_svm_begin = amp_millis();
-            class = predict(&f_img[0]);
-            t_svm_end = amp_millis();   
+            class = predict(&source_data.f_img[0]);
+            t_svm_end = amp_millis();
+
+            source_data.flag_received = 1;   
 
             t_send_begin = amp_millis();
             amp_comms_send(&_tx, AMP_SEND_PREDICTION, &class, sizeof(class));
@@ -197,6 +204,8 @@ int main(void)
     uart_init();
     amp_comms_init(&_tx, &_rx);
     amp_millis_init();
+
+    source_data.flag_received = 0;
 
     help();
     prompt();

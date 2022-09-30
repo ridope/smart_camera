@@ -46,7 +46,6 @@ SECTIONS
 	{
 		. = ALIGN(8);
 		KEEP(*(img_float));
-		KEEP(*(img_char));
 		KEEP(*(shared_ram_first));
 		KEEP(*(shared_ram_second));
 		KEEP(*(shared_ram));

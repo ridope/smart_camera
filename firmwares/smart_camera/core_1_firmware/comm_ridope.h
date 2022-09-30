@@ -21,6 +21,9 @@ typedef enum CMD_TYPE
 {
     REBOOT = 48,
     TRANS_PHOTO,
+    TRANS_CAPTURE,
+    TRANS_GAUSS,
+    TRANS_OTSU,
     TRANS_FFT,
     TRANS_IFFT,
     PHOTO_SIZE,

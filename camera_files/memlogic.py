@@ -17,9 +17,8 @@ class MemLogic(Module):
 
         data_width = amp_soc.bus.data_width
 
-        # A Float image has a size of -> 28x28 = 784, since the bus is addressed as 32bit, no need to multiply by four the size.
-        # The char image will start at the base address 784 (0XC40).
-        addr_base = 784
+        # Change addr_base to write in a different memory space
+        addr_base = 0
         
         self.logic_write_data = Signal(data_width)
         self.local_adr = Signal(30)
@@ -31,7 +30,7 @@ class MemLogic(Module):
        
         mem_if = wishbone.Interface()      
 
-        amp_soc.bus.add_master(master=mem_if)
+        self.submodules.arb = wishbone.Arbiter([mem_if, amp_soc.mmap_sp1], amp_soc.scratch1.bus)
 
         # FSM.
         self.submodules.fsm = fsm = FSM(reset_state="IDLE")

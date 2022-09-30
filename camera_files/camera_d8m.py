@@ -23,7 +23,7 @@ class Camera_D8M(Module, AutoCSR):
         # In order to produce the 28x28 image, it was necessary to increase the output size by width_size+2 and height_size+6
         self.control = CSRStorage(fields=[
             CSRField("WSize", size=16, description="Sensor Width Size", reset=30),
-            CSRField("HSize", size=16, description="Sensor Height Size", reset=34)
+            CSRField("HSize", size=16, description="Sensor Height Size", reset=35)
         ])
 
         self.test = CSRStorage(fields=[
